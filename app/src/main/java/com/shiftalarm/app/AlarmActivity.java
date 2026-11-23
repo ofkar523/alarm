@@ -92,6 +92,19 @@ public class AlarmActivity extends Activity {
         // 뒤로가기로는 알람을 끌 수 없음 (끄기 / 5분 후 버튼 사용)
     }
 
+    static boolean isShowing() {
+        AlarmActivity a = current.get();
+        return a != null && !a.isFinishing() && a.visible;
+    }
+
+    private boolean visible = false;
+
+    @Override
+    protected void onStart() { super.onStart(); visible = true; }
+
+    @Override
+    protected void onStop() { visible = false; super.onStop(); }
+
     static void closeAll() {
         AlarmActivity a = current.get();
         if (a != null) a.runOnUiThread(a::finish);

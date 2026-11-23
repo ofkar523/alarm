@@ -54,6 +54,7 @@ public class AlarmBridge {
             o.put("exact", Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms());
             o.put("fullscreen", Build.VERSION.SDK_INT < 34 || nm.canUseFullScreenIntent());
             o.put("battery", pm.isIgnoringBatteryOptimizations(act.getPackageName()));
+            o.put("overlay", Settings.canDrawOverlays(act));
         } catch (Exception ignored) { }
         return o.toString();
     }
@@ -74,6 +75,9 @@ public class AlarmBridge {
                     break;
                 case "fullscreen":
                     if (Build.VERSION.SDK_INT >= 34) i = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, pkg);
+                    break;
+                case "overlay":
+                    i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, pkg);
                     break;
                 case "battery":
                     i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, pkg);

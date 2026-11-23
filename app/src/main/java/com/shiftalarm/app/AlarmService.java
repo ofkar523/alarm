@@ -80,10 +80,31 @@ public class AlarmService extends Service {
         startVibration();
         ringing = true;
 
-        // 화면이 켜져 있으면 알람 화면을 바로 띄움 (꺼져 있으면 알림의 전체 화면 인텐트가 띄움)
-        try { startActivity(alarmActivityIntent(this)); } catch (Exception ignored) { }
+        // 알람 화면 띄우기
+        //  - 화면이 꺼져 있으면: 알림의 전체 화면 인텐트가 띄움 ('잠금 화면 알람' 권한)
+        //  - '다른 앱 위에 표시' 권한이 있으면: 여기서 직접 띄움 (화면 꺼짐/잠금/다른 앱 사용 중 모두)
+        openAlarmScreen();
+        handler.postDelayed(this::openAlarmScreen, 700);   // 화면이 켜지는 중이라 첫 시도가 무시될 때 대비
+        handler.postDelayed(this::wakeScreen, 300);
         AlarmActivity.refreshAll();
         return START_NOT_STICKY;
+    }
+
+    private void openAlarmScreen() {
+        if (!ringing || AlarmActivity.isShowing()) return;
+        try { startActivity(alarmActivityIntent(this)); } catch (Exception ignored) { }
+    }
+
+    /** 꺼진 화면을 켬 (알람 화면이 잠금 화면 위에 보이도록) */
+    @SuppressWarnings("deprecation")
+    private void wakeScreen() {
+        try {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm.isInteractive()) return;
+            PowerManager.WakeLock w = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+                    | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ShiftAlarm:screen");
+            w.acquire(10_000L);
+        } catch (Exception ignored) { }
     }
 
     private void startSound() {
@@ -135,6 +156,7 @@ public class AlarmService extends Service {
     @SuppressWarnings("deprecation")
     private void stopAll() {
         ringing = false;
+        handler.removeCallbacksAndMessages(null);
         stopSound();
         if (vibrator != null) vibrator.cancel();
         if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
