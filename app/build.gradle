@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+// GitHub Actions가 서명 키를 넣어 주면 그 키로, 없으면 디버그 키로 서명합니다.
+def ksFile = file('release.keystore')
+def hasReleaseKey = ksFile.exists() && (System.getenv('KEYSTORE_PASSWORD') ?: '') != ''
+
+android {
+    namespace 'com.shiftalarm.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.shiftalarm.app'
+        minSdk 26
+        targetSdk 34
+        // 빌드할 때마다 번호가 올라가야 기존 앱 위에 업데이트 설치가 됩니다.
+        versionCode = Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
+        versionName = "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+
+    signingConfigs {
+        if (hasReleaseKey) {
+            release {
+                storeFile ksFile
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS') ?: 'shiftalarm'
+                keyPassword System.getenv('KEY_PASSWORD') ?: System.getenv('KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig = hasReleaseKey ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}

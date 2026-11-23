@@ -1,0 +1,90 @@
+package com.shiftalarm.app;
+
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.webkit.JavascriptInterface;
+
+import org.json.JSONObject;
+
+/** index.html 에서 window.NativeAlarm 으로 호출하는 함수들 */
+public class AlarmBridge {
+    private final Activity act;
+
+    AlarmBridge(Activity act) { this.act = act; }
+
+    /** 앞으로 울릴 알람 목록(JSON 배열)을 받아 휴대폰 알람에 예약 */
+    @JavascriptInterface
+    public void schedule(String json) {
+        AlarmScheduler.scheduleAll(act.getApplicationContext(), json);
+    }
+
+    /** 알람 테스트: 지금 바로 알람 화면을 띄우고 울림 */
+    @JavascriptInterface
+    public void test(String sound, String label) {
+        Intent i = new Intent(act, AlarmService.class);
+        i.setAction(AlarmService.ACTION_RING);
+        i.putExtra("time", AlarmScheduler.hhmm(System.currentTimeMillis()));
+        i.putExtra("label", label);
+        i.putExtra("sound", sound);
+        try { act.startForegroundService(i); } catch (Exception ignored) { }
+    }
+
+    /** 소리 미리 듣기(한 번) */
+    @JavascriptInterface
+    public void preview(String sound) {
+        act.runOnUiThread(() -> Sounds.preview(act, sound));
+    }
+
+    /** 권한 상태: {notif, exact, fullscreen, battery} */
+    @JavascriptInterface
+    public String permStatus() {
+        JSONObject o = new JSONObject();
+        try {
+            NotificationManager nm = (NotificationManager) act.getSystemService(Context.NOTIFICATION_SERVICE);
+            AlarmManager am = (AlarmManager) act.getSystemService(Context.ALARM_SERVICE);
+            PowerManager pm = (PowerManager) act.getSystemService(Context.POWER_SERVICE);
+            o.put("notif", nm.areNotificationsEnabled());
+            o.put("exact", Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms());
+            o.put("fullscreen", Build.VERSION.SDK_INT < 34 || nm.canUseFullScreenIntent());
+            o.put("battery", pm.isIgnoringBatteryOptimizations(act.getPackageName()));
+        } catch (Exception ignored) { }
+        return o.toString();
+    }
+
+    /** 해당 권한의 설정 화면 열기 */
+    @JavascriptInterface
+    public void openPerm(String key) {
+        act.runOnUiThread(() -> {
+            Uri pkg = Uri.parse("package:" + act.getPackageName());
+            Intent i = null;
+            switch (key) {
+                case "notif":
+                    i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                            .putExtra(Settings.EXTRA_APP_PACKAGE, act.getPackageName());
+                    break;
+                case "exact":
+                    if (Build.VERSION.SDK_INT >= 31) i = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, pkg);
+                    break;
+                case "fullscreen":
+                    if (Build.VERSION.SDK_INT >= 34) i = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, pkg);
+                    break;
+                case "battery":
+                    i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, pkg);
+                    break;
+            }
+            if (i == null) i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkg);
+            try {
+                act.startActivity(i);
+            } catch (Exception e) {
+                try { act.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkg)); } catch (Exception ignored) { }
+            }
+        });
+    }
+}

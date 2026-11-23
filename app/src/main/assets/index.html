@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e293b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>교대근무 알람</title>
+<style>
+  :root{
+    --bg:#f1f5f9; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --accent:#2563eb; --accent-soft:#dbeafe; --danger:#dc2626; --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+    font-size:15px;line-height:1.45}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+  input{font:inherit;color:inherit}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+  header{position:sticky;top:0;z-index:5;background:#1e293b;color:#fff;padding:14px 18px;
+    padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between}
+  header h1{font-size:17px;margin:0;font-weight:700;letter-spacing:-.2px}
+  header .sub{font-size:13px;opacity:.75}
+  main{flex:1;padding:16px 14px 96px}
+  nav#tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+    background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+  nav#tabs button{flex:1;padding:10px 0 12px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+  nav#tabs button .ic{font-size:20px;line-height:1}
+  nav#tabs button.on{color:var(--accent);font-weight:700}
+  .card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+  h2{font-size:18px;margin:0 0 6px;letter-spacing:-.3px}
+  h3{font-size:15px;margin:0 0 8px}
+  .muted{color:var(--muted)} .small{font-size:13px}
+  .row{display:flex;align-items:center;gap:8px}
+  .between{justify-content:space-between}
+  .wrap{flex-wrap:wrap}
+  .primary,.ghost,.danger{display:block;width:100%;padding:15px;border-radius:14px;font-weight:700;font-size:16px;text-align:center}
+  .primary{background:var(--accent);color:#fff}
+  .primary:disabled{background:#94a3b8}
+  .ghost{background:#fff;border:1px solid var(--line)}
+  .danger{background:#fff;color:var(--danger);border:1px solid #fecaca}
+  .btns{display:flex;gap:10px} .btns>*{flex:1}
+  .small-btn{white-space:nowrap;flex:none;padding:7px 12px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:13px}
+  .link{color:var(--accent);font-weight:600;font-size:14px;padding:6px 0}
+  .big-input{width:100%;font-size:22px;padding:14px 16px;border:2px solid var(--line);border-radius:14px;outline:none;letter-spacing:4px;margin:10px 0}
+  .big-input:focus{border-color:var(--accent)}
+  .text-input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;outline:none}
+  .text-input:focus{border-color:var(--accent)}
+  .steps{display:flex;gap:6px;margin-bottom:14px}
+  .steps i{flex:1;height:5px;border-radius:3px;background:#cbd5e1}
+  .steps i.on{background:var(--accent)}
+  .chip{display:inline-flex;align-items:center;justify-content:center;color:#fff;border-radius:8px;padding:3px 9px;font-size:13px;font-weight:700;white-space:nowrap}
+  .chip.mini{padding:1px 0;width:100%;font-size:11px;border-radius:5px}
+  .chip.outline{background:#fff!important;border:2px dashed #cbd5e1;color:var(--muted)}
+  .examples{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .examples button{padding:6px 10px;border-radius:999px;background:#f1f5f9;font-size:13px}
+  .preview{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+  .preview .cell-p{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted)}
+  .opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:12px 0}
+  .opt{border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;background:#fff}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .opt .nm{font-weight:800;font-size:17px}
+  .opt .ds{font-size:12px;color:var(--muted);margin-top:4px}
+  .dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+  /* calendar */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .cal-head b{font-size:17px}
+  .icon{width:38px;height:38px;border-radius:10px;background:#f1f5f9;font-size:22px;line-height:1}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .wd{text-align:center;font-size:12px;color:var(--muted);padding:4px 0;font-weight:600}
+  .sun{color:#ef4444!important} .sat{color:#3b82f6!important}
+  .cell{min-height:64px;border-radius:10px;background:#f8fafc;padding:4px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;border:2px solid transparent}
+  .cell[data-a]{cursor:pointer}
+  .cell[data-a]:active{background:#e2e8f0}
+  .cell .dn{font-size:13px;font-weight:600}
+  .cell .chips{display:flex;flex-direction:column;gap:2px;width:100%}
+  .cell.other{opacity:.38}
+  .cell.today{border-color:var(--accent);background:#eff6ff}
+  .cell.edited::after{content:"";position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:#f43f5e}
+  .legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+  /* today card */
+  .today-card{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff}
+  .today-card .big{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .today-card .muted{color:#bfdbfe}
+  .next-box{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;margin-top:12px}
+  .banner{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+  /* groups */
+  .group-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .group-head .name-in{flex:1;font-weight:700;font-size:16px;border:0;border-bottom:1px dashed transparent;padding:2px 0;outline:none;background:none;min-width:0}
+  .group-head .name-in:focus{border-bottom-color:var(--accent)}
+  .color-in{width:28px;height:28px;border:0;padding:0;background:none;border-radius:50%;overflow:hidden;flex:none}
+  .color-in::-webkit-color-swatch-wrapper{padding:0}.color-in::-webkit-color-swatch{border:0;border-radius:50%}
+  .time-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+  .time-row input[type=time]{font-size:22px;font-weight:700;border:0;background:none;outline:none;flex:1;min-width:0}
+  .time-row.off input[type=time]{color:#cbd5e1}
+  .g-row{display:flex;align-items:center;gap:10px;width:100%;padding:14px 0;text-align:left}
+  .g-row .g-name{flex:1;font-weight:700;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .g-row .chev{color:#94a3b8;font-size:20px;width:16px;text-align:center}
+  .badge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+  .badge.off{background:#f1f5f9;color:#94a3b8}
+  .badge.none{background:#fffbeb;color:#b45309}
+  .mv{width:36px;height:34px;border-radius:10px;background:#f1f5f9;color:#475569;font-size:13px}
+  .mv:disabled{opacity:.3;cursor:default}
+  .mv:active:not(:disabled){background:#e2e8f0}
+  .del{width:32px;height:32px;border-radius:8px;color:#94a3b8;font-size:18px}
+  .switch{position:relative;width:46px;height:28px;flex:none}
+  .switch input{display:none}
+  .switch span{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;transition:.2s}
+  .switch span::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .switch input:checked+span{background:var(--accent)}
+  .switch input:checked+span::after{transform:translateX(18px)}
+  .group-card.flash{animation:flash 1.6s ease}
+  @keyframes flash{0%,40%{box-shadow:0 0 0 3px #f43f5e}100%{box-shadow:0 1px 2px rgba(15,23,42,.05)}}
+  .empty{color:var(--muted);font-size:13px;padding:6px 0}
+  .list-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-top:1px solid var(--line)}
+  .list-row:first-of-type{border-top:0}
+  .up-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+  .up-item:first-child{border-top:0}
+  .up-item .t{font-size:19px;font-weight:800;width:62px}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+  .sheet{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto;animation:up .2s ease}
+  @keyframes up{from{transform:translateY(40px);opacity:.5}}
+  .sel-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .sel-grid button{padding:10px 14px;border-radius:12px;border:2px solid var(--line);font-weight:700;display:flex;align-items:center;gap:6px;background:#fff}
+  .sel-grid button.on{color:#fff}
+  .swatches{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .swatches button{width:28px;height:28px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--line)}
+  .swatches button.on{box-shadow:0 0 0 2px var(--ink)}
+  .hidden{display:none!important}
+  .memo-mini{width:100%;font-size:10px;line-height:1.25;color:#475569;background:#fef9c3;border-radius:4px;padding:1px 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+  .memo-in{resize:vertical;min-height:70px;font-size:15px;line-height:1.45}
+  .today-memo{margin-top:10px;background:rgba(255,255,255,.14);border-radius:12px;padding:9px 12px;font-size:14px;white-space:pre-wrap;cursor:pointer}
+  .snd-sel{flex:1;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;font-size:14px}
+  .warn{color:#b45309;font-size:13px;background:#fffbeb;border-radius:10px;padding:8px 10px;margin-top:6px}
+  /* ringing */
+  .ring{position:fixed;inset:0;z-index:30;background:linear-gradient(160deg,#0f172a,#1e3a8a);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center}
+  .ring .rt{font-size:72px;font-weight:800;letter-spacing:-2px;animation:pulse 1.2s infinite}
+  @keyframes pulse{50%{opacity:.55}}
+  .ring .labels{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .ring .chip{font-size:18px;padding:6px 14px}
+  .ring button{width:100%;max-width:320px;padding:18px;border-radius:16px;font-size:18px;font-weight:800}
+  .ring .stop{background:#fff;color:#0f172a}
+  .ring .snooze{background:rgba(255,255,255,.15);color:#fff}
+  #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:40;max-width:90%;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <h1>교대근무 알람</h1>
+      <div class="sub" id="hdrSub"></div>
+    </div>
+    <div style="text-align:right">
+      <div id="clock" style="font-size:20px;font-weight:800"></div>
+      <div class="sub" id="masterState"></div>
+    </div>
+  </header>
+  <main id="view"></main>
+  <nav id="tabs" class="hidden">
+    <button data-a="tab" data-t="cal"><span class="ic">📅</span>캘린더</button>
+    <button data-a="tab" data-t="alarm"><span class="ic">⏰</span>알람</button>
+    <button data-a="tab" data-t="set"><span class="ic">⚙️</span>설정</button>
+  </nav>
+</div>
+<div id="modal" class="modal hidden"></div>
+<div id="ring" class="ring hidden"></div>
+<div id="toast"></div>
+
+<script>
+/* ===================== 기본 데이터 ===================== */
+const STORE_KEY = 'shiftAlarm.v1';
+const DEFAULT_NAMES  = {주:'주간', 야:'야간', 휴:'휴일', 비:'비번', 오:'오후', 지:'지원', 당:'당직', 석:'석간', 새:'새벽', 교:'교육'};
+const DEFAULT_COLORS = {주:'#f59e0b', 야:'#6366f1', 휴:'#10b981', 비:'#94a3b8', 오:'#0ea5e9', 지:'#ef4444', 당:'#ec4899', 교:'#8b5cf6'};
+const DEFAULT_ALARMS = {주:['05:30','05:32','05:35'], 야:['17:30','17:32','17:35']};
+const OFF_CHARS = ['휴','비'];
+const PALETTE = ['#f59e0b','#6366f1','#10b981','#ef4444','#0ea5e9','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16','#a855f7'];
+const WD = ['일','월','화','수','목','금','토'];
+
+/* ===================== 유틸 ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const hm  = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const parseYmd = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (s,n) => { const d = parseYmd(s); d.setDate(d.getDate()+n); return ymd(d); };
+const diffDays = (a,b) => { const A=parseYmd(a), B=parseYmd(b);
+  return Math.round((Date.UTC(B.getFullYear(),B.getMonth(),B.getDate()) - Date.UTC(A.getFullYear(),A.getMonth(),A.getDate()))/864e5); };
+const fmtDate = s => { const d = parseYmd(s); return `${d.getMonth()+1}월 ${d.getDate()}일 (${WD[d.getDay()]})`; };
+const todayStr = () => ymd(new Date());
+const addMin = (t, m) => { let [h,mm] = t.split(':').map(Number); let x = (h*60+mm+m) % 1440; if (x<0) x+=1440; return `${pad(Math.floor(x/60))}:${pad(x%60)}`; };
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), 2600); }
+
+/* ===================== 상태 ===================== */
+function fresh(){ return {setupDone:false, pattern:[], types:{}, anchorDate:null, anchorIndex:0, groups:{}, overrides:{}, enabled:true, sound:'beep', snoozes:[], lastFired:'', memos:{}}; }
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)); }catch(e){ return null; } }
+const NATIVE = window.NativeAlarm || null; // 안드로이드 앱 안에서 실행 중이면 존재
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} scheduleNativeSoon(); }
+/* 안드로이드: 앞으로 45일치 알람을 휴대폰 알람(AlarmManager)에 예약 */
+let nativeTimer = null, nativeUntil = null;
+function scheduleNativeSoon(){ if (!NATIVE) return; clearTimeout(nativeTimer); nativeTimer = setTimeout(scheduleNative, 300); }
+function scheduleNative(){
+  if (!NATIVE) return;
+  const list = [];
+  if (S.setupDone && S.enabled){
+    const now = Date.now(), today = todayStr();
+    for (let k=0; k<45 && list.length<300; k++){
+      const date = addDays(today, k);
+      alarmsFor(shiftsOn(date)).forEach(a => {
+        const [h,m] = a.time.split(':').map(Number), d = parseYmd(date); d.setHours(h, m, 0, 0);
+        if (d.getTime() > now + 1000 && list.length < 300)
+          list.push({at:d.getTime(), time:a.time, label:a.ids.map(id=>S.types[id].name).join(' · '), sound:soundOf(a.ids)});
+      });
+    }
+  }
+  nativeUntil = list.length ? list[list.length-1].at : null;
+  try{ NATIVE.schedule(JSON.stringify(list)); }catch(e){}
+}
+let S = Object.assign(fresh(), load() || {});
+if (!S.memos) S.memos = {};
+if (!S.sound) S.sound = 'beep';
+delete S.wake;
+
+/* ===================== 근무 계산 ===================== */
+function baseShift(date){
+  const L = S.pattern.length; if (!L || !S.anchorDate) return null;
+  const i = (((S.anchorIndex + diffDays(S.anchorDate, date)) % L) + L) % L;
+  return S.pattern[i];
+}
+function shiftsOn(date){
+  if (S.overrides[date]) return S.overrides[date].filter(id => S.types[id]);
+  const b = baseShift(date); return b && S.types[b] ? [b] : [];
+}
+function alarmsFor(ids){
+  const map = {};
+  ids.forEach(id => {
+    const g = S.groups[id]; if (!g || !g.on) return;
+    g.times.forEach(t => { if (t.on) (map[t.t] = map[t.t] || []).push(id); });
+  });
+  return Object.keys(map).sort().map(time => ({time, ids: map[time]}));
+}
+function upcoming(limit=5){
+  const now = new Date(), today = ymd(now), nowT = hm(now), out = [];
+  if (!S.enabled) return out;
+  for (let k=0; k<10 && out.length<limit; k++){
+    const date = addDays(today, k);
+    alarmsFor(shiftsOn(date)).forEach(a => { if (k>0 || a.time > nowT) out.push({date, ...a}); });
+  }
+  return out.slice(0, limit);
+}
+function untilText(date, time){
+  const [h,m] = time.split(':').map(Number); const d = parseYmd(date); d.setHours(h, m, 0, 0);
+  let mins = Math.round((d - new Date())/60000); if (mins < 1) return '곧';
+  const dd = Math.floor(mins/1440), hh = Math.floor((mins%1440)/60), mm = mins%60;
+  return (dd? dd+'일 ':'') + (hh? hh+'시간 ':'') + mm + '분 후';
+}
+function dayWord(date){ const k = diffDays(todayStr(), date); return k===0?'오늘':k===1?'내일':k===2?'모레':fmtDate(date); }
+
+/* ===================== 타입 / 그룹 ===================== */
+function typeOrder(){
+  const seen = []; S.pattern.forEach(id => { if (!seen.includes(id)) seen.push(id); });
+  Object.keys(S.types).forEach(id => { if (!seen.includes(id)) seen.push(id); });
+  const ord = (S.order || []).filter(id => S.types[id]);
+  return [...ord, ...seen.filter(id => !ord.includes(id))];
+}
+function moveType(id, dir){
+  const list = typeOrder(), i = list.indexOf(id), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  S.order = list; save();
+}
+function moveGroup(id, dir){
+  const el = document.getElementById('g-'+id), top = el ? el.getBoundingClientRect().top : null;
+  moveType(id, dir); render();
+  const n = document.getElementById('g-'+id);
+  if (n){
+    if (top !== null) window.scrollBy(0, n.getBoundingClientRect().top - top); // 옮긴 카드가 손가락 아래 그대로 있게
+    n.style.transition = 'none'; n.style.boxShadow = '0 0 0 2px var(--accent)';
+    setTimeout(() => { n.style.transition = 'box-shadow .6s'; n.style.boxShadow = ''; }, 350);
+  }
+}
+function nextColor(){ const used = Object.values(S.types).map(t=>t.color); return PALETTE.find(c=>!used.includes(c)) || PALETTE[Object.keys(S.types).length % PALETTE.length]; }
+function ensureGroup(id){ if (!S.groups[id]) S.groups[id] = {on:true, times:[]}; }
+function chip(id, mini){
+  const t = S.types[id]; if (!t) return '';
+  return `<span class="chip ${mini?'mini':''}" style="background:${t.color}">${esc(mini ? t.short : t.name)}</span>`;
+}
+function addCustomType(name, color){
+  name = name.trim(); if (!name) return null;
+  const exist = Object.entries(S.types).find(([,t]) => t.name === name); if (exist) return exist[0];
+  const id = 'c' + Date.now().toString(36);
+  S.types[id] = {name, short:name[0], color: color || nextColor(), off:false};
+  ensureGroup(id); return id;
+}
+
+/* ===================== 화면 상태 ===================== */
+let tab = 'cal';
+const now0 = new Date(); let calY = now0.getFullYear(), calM = now0.getMonth();
+const W = {step:1, text:'', pickType:null, pickIdx:null};
+let D = null; // 날짜 편집 모달 상태
+let flashGroup = null;
+let openGroup = null;
+let colorPickFor = null; // 알람 탭에서 펼쳐진 그룹
+
+/* ===================== 렌더 ===================== */
+function render(){
+  $('#tabs').classList.toggle('hidden', !S.setupDone);
+  if (!S.setupDone) renderWizard(); else renderMain();
+  updateLive();
+}
+
+/* ---------- 초기 설정 ---------- */
+function stepsBar(){ return `<div class="steps">${[1,2,3,4].map(i=>`<i class="${i<=W.step?'on':''}"></i>`).join('')}</div>`; }
+
+function parsePattern(text){ return [...text.replace(/\s|,|\/|-/g,'')]; }
+function patternPreview(text){
+  const chars = parsePattern(text);
+  if (!chars.length) return '<p class="muted small">입력하면 미리보기가 나타납니다.</p>';
+  const cells = chars.map((c,i) => {
+    const color = (S.types[c] && S.types[c].color) || DEFAULT_COLORS[c] || '#64748b';
+    return `<div class="cell-p"><span class="chip" style="background:${color}">${esc(c)}</span>${i+1}</div>`;
+  }).join('');
+  const uniq = [...new Set(chars)];
+  const names = uniq.map(c => {
+    const nm = (S.types[c] && S.types[c].name) || DEFAULT_NAMES[c] || (c+'근무');
+    const isNew = !DEFAULT_NAMES[c] && !S.types[c];
+    return `<b>${esc(c)}</b>=${esc(nm)}${isNew?' <span class="muted">(새 유형)</span>':''}`;
+  }).join(' · ');
+  return `<div class="preview">${cells}</div><p class="small">주기 <b>${chars.length}일</b> · ${names}</p>`;
+}
+
+function renderWizard(){
+  $('#hdrSub').textContent = `초기 설정 ${W.step}/4`;
+  const v = $('#view');
+  if (W.step === 1){
+    v.innerHTML = stepsBar() + `
+      <div class="card">
+        <h2>근무 패턴 입력</h2>
+        <p class="muted small">한 글자가 하루입니다. 반복되는 한 주기를 순서대로 입력하세요.</p>
+        <input id="pat" class="big-input" placeholder="주주휴휴야야휴휴" value="${esc(W.text)}" autocomplete="off">
+        <div class="examples">
+          ${['주주휴휴야야휴휴','주야비휴','주주야야비휴','주주주주주휴휴'].map(p=>`<button data-a="ex" data-p="${p}">${p}</button>`).join('')}
+        </div>
+        <div id="patPreview">${patternPreview(W.text)}</div>
+        <p class="muted small" style="margin:8px 0 0">주=주간 · 야=야간 · 휴=휴일 · 비=비번 · 오=오후 · 지=지원 · 당=당직<br>그 외 글자는 새 근무 유형이 되고, 이름은 나중에 바꿀 수 있어요.</p>
+      </div>
+      <button class="primary" data-a="w1next">다음</button>`;
+    return;
+  }
+  if (W.step === 2){
+    const uniq = []; S.pattern.forEach(id => { if (!uniq.includes(id)) uniq.push(id); });
+    let html = stepsBar() + `<div class="card"><h2>오늘의 근무 선택</h2>
+      <p class="muted small">오늘 <b>${fmtDate(todayStr())}</b>은 어떤 근무인가요?</p>
+      <div class="opt-grid">${uniq.map(id=>{
+        const n = S.pattern.filter(x=>x===id).length;
+        return `<button class="opt ${W.pickType===id?'sel':''}" data-a="pickType" data-id="${id}">
+          <span class="chip" style="background:${S.types[id].color}">${esc(S.types[id].short)}</span>
+          <div class="nm" style="margin-top:6px">${esc(S.types[id].name)}</div>
+          <div class="ds">주기 중 ${n}일</div></button>`;}).join('')}</div>`;
+    if (W.pickType){
+      const pos = S.pattern.map((x,i)=>x===W.pickType?i:-1).filter(i=>i>=0);
+      if (pos.length > 1){
+        html += `<h3 style="margin-top:6px">연속 근무 중 며칠째인가요?</h3><div class="opt-grid" style="grid-template-columns:1fr">` +
+          pos.map(i=>{
+            const L = S.pattern.length; let run = 1;
+            while (run < L && S.pattern[(i-run+L)%L] === W.pickType) run++;
+            const next = [1,2,3,4].map(k=>chip(S.pattern[(i+k)%L])).join(' ');
+            return `<button class="opt ${W.pickIdx===i?'sel':''}" data-a="pickIdx" data-i="${i}" style="text-align:left">
+              <div class="nm" style="font-size:15px">${esc(S.types[W.pickType].name)} ${run}일째 <span class="muted small">(패턴 ${i+1}번째 칸)</span></div>
+              <div class="ds row" style="margin-top:6px">내일부터 → ${next}</div></button>`;
+          }).join('') + `</div>`;
+      }
+    }
+    html += `</div><div class="btns"><button class="ghost" data-a="wBack">이전</button>
+      <button class="primary" data-a="w2next" ${W.pickIdx===null?'disabled':''}>다음</button></div>`;
+    $('#view').innerHTML = html;
+    return;
+  }
+  if (W.step === 3){
+    $('#view').innerHTML = stepsBar() + `
+      <div class="card"><h2>캘린더 확인</h2>
+        <p class="muted small">근무 일정이 맞게 표시되는지 확인하세요. 월을 넘겨 볼 수 있어요.</p>
+        ${calHTML(calY, calM, false)}
+      </div>
+      <div class="btns"><button class="ghost" data-a="wBack">다시 선택</button>
+      <button class="primary" data-a="w3next">맞아요</button></div>`;
+    return;
+  }
+  if (W.step === 4){
+    $('#view').innerHTML = stepsBar() + `
+      <div class="card" style="padding-bottom:10px"><h2>근무별 알람 설정</h2>
+        <p class="muted small">근무 유형마다 알람 그룹을 만들어 두면, 캘린더의 근무에 따라 해당 그룹 알람이 울립니다.</p></div>
+      ${groupsHTML(false)}
+      <button class="primary" data-a="w4done">설정 완료</button>`;
+  }
+}
+
+/* ---------- 캘린더 ---------- */
+function calHTML(y, m, interactive){
+  const first = new Date(y, m, 1), dim = new Date(y, m+1, 0).getDate();
+  const weeks = Math.ceil((first.getDay() + dim) / 7), today = todayStr();
+  let h = `<div class="cal-head"><button class="icon" data-a="calPrev">‹</button>
+    <b data-a="calToday" style="cursor:pointer">${y}년 ${m+1}월</b><button class="icon" data-a="calNext">›</button></div>
+    <div class="cal-grid">${WD.map((w,i)=>`<div class="wd ${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('')}`;
+  for (let i=0; i<weeks*7; i++){
+    const d = new Date(y, m, 1 - first.getDay() + i), ds = ymd(d), wd = d.getDay();
+    h += `<div class="cell ${d.getMonth()!==m?'other':''} ${ds===today?'today':''} ${S.overrides[ds]?'edited':''}" ${interactive?`data-a="day" data-d="${ds}"`:''}>
+      <span class="dn ${wd===0?'sun':wd===6?'sat':''}">${d.getDate()}</span>
+      <div class="chips">${shiftsOn(ds).map(id=>chip(id,true)).join('')}</div>
+      ${S.memos[ds] ? `<div class="memo-mini">${esc(S.memos[ds].split('\n')[0])}</div>` : ''}</div>`;
+  }
+  h += `</div><div class="legend">${typeOrder().map(id=>`<span class="row small" style="gap:4px">${chip(id)}</span>`).join('')}
+    ${interactive?'<span class="small muted" style="margin-left:auto">● 변경된 날</span>':''}</div>`;
+  return h;
+}
+
+/* ---------- 알람 그룹 편집 ---------- */
+function groupsHTML(full){
+  const list = typeOrder();
+  return list.map((id, idx) => {
+    const t = S.types[id]; ensureGroup(id); const g = S.groups[id];
+    const inPattern = S.pattern.includes(id);
+    const times = g.times.length ? g.times.map((x,i)=>`
+      <div class="time-row ${x.on&&g.on?'':'off'}">
+        <input type="time" value="${x.t}" data-c="time" data-id="${id}" data-i="${i}">
+        <label class="switch"><input type="checkbox" ${x.on?'checked':''} data-c="tOn" data-id="${id}" data-i="${i}"><span></span></label>
+        <button class="del" data-a="tDel" data-id="${id}" data-i="${i}" aria-label="삭제">✕</button>
+      </div>`).join('') : `<div class="empty">${t.off?'휴무일 — 알람 없음 (필요하면 추가)':'알람이 없습니다. 시간을 추가하세요.'}</div>`;
+    const onCount = g.times.filter(x=>x.on).length;
+    const status = !g.on ? '<span class="badge off">꺼짐</span>'
+      : onCount ? `<span class="badge">${onCount}개</span>` : '<span class="badge none">알람 없음</span>';
+    const arrows = `<button class="mv" data-a="mvUp" data-id="${id}" ${idx===0?'disabled':''} aria-label="위로">▲</button>
+          <button class="mv" data-a="mvDown" data-id="${id}" ${idx===list.length-1?'disabled':''} aria-label="아래로">▼</button>`;
+    const headRow = `<div class="row" style="gap:6px">
+      <button class="g-row" data-a="gOpen" data-id="${id}">
+        <span class="dot" style="background:${t.color};width:14px;height:14px"></span>
+        <span class="g-name">${esc(t.name)}</span>${status}
+        <span class="chev">${openGroup===id?'⌃':'›'}</span></button>
+      ${arrows}</div>`;
+    // 알람 탭: 접힌 상태면 그룹명만 표시
+    if (full && openGroup !== id){
+      return `<div class="card group-card ${flashGroup===id?'flash':''}" id="g-${id}" style="padding:4px 14px">${headRow}</div>`;
+    }
+    return `<div class="card group-card ${flashGroup===id?'flash':''}" id="g-${id}" ${full?'style="padding:4px 14px 14px"':''}>
+      ${full ? headRow + '<div style="border-top:1px solid var(--line);margin:4px 0 10px"></div>' : ''}
+      <div class="group-head">
+        <button class="color-in" style="background:${t.color}" data-a="colorPick" data-id="${id}" aria-label="색 바꾸기"></button>
+        <input class="name-in" value="${esc(t.name)}" data-c="tName" data-id="${id}" maxlength="10">
+        <span class="small muted">${full?'그룹 켜기':onCount+'개'}</span>
+        <label class="switch"><input type="checkbox" ${g.on?'checked':''} data-c="gOn" data-id="${id}"><span></span></label>
+      </div>
+      ${colorPickFor===id ? `<div class="swatches" style="margin:0 0 10px">${PALETTE.map(c=>`<button class="${c===t.color?'on':''}" style="background:${c}" data-a="colorSet" data-id="${id}" data-c="${c}"></button>`).join('')}</div>` : ''}
+      <div class="row" style="padding:8px 0;border-top:1px solid var(--line)">
+        <span class="small muted" style="flex:none">알람 소리</span>
+        <select class="snd-sel" data-c="gSound" data-id="${id}">${soundOptions(g.sound||'', true)}</select>
+        <button class="small-btn" data-a="sndPlay" data-s="${soundOf([id])}">▶</button>
+      </div>
+      ${times}
+      <div class="row between" style="margin-top:8px">
+        <button class="small-btn" data-a="tAdd" data-id="${id}">+ 알람 시간 추가</button>
+        <div class="row" style="gap:6px">
+          ${full && !inPattern ? `<button class="link" style="color:var(--danger);margin-right:4px" data-a="typeDel" data-id="${id}">그룹 삭제</button>` : ''}
+          ${full ? '' : arrows}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- 메인 ---------- */
+function nativePermRows(){
+  let p = {}; try{ p = JSON.parse(NATIVE.permStatus()); }catch(e){}
+  const row = (ok, title, desc, key) => `<div class="list-row"><div><b>${title}</b><div class="small muted">${ok?'허용됨':desc}</div></div>
+    ${ok ? '<span class="badge">✓</span>' : `<button class="small-btn" data-a="nPerm" data-k="${key}">설정 열기</button>`}</div>`;
+  return row(p.notif, '알림', '알람 화면을 띄우려면 필요해요', 'notif')
+    + row(p.exact, '정확한 알람', '정해진 시각에 울리려면 필요해요', 'exact')
+    + row(p.fullscreen, '잠금 화면 알람', '화면이 꺼져 있을 때 알람 화면을 띄워요', 'fullscreen')
+    + row(p.battery, '배터리 최적화 제외', '삼성 등 일부 폰에서 알람이 늦거나 안 울리는 걸 막아요', 'battery')
+    + `<div class="list-row"><div><b>예약된 알람</b><div class="small muted">${nativeUntil ? fmtDate(ymd(new Date(nativeUntil)))+'까지 휴대폰에 예약됨 · 앱을 열 때마다 연장돼요' : '예약된 알람 없음'}</div></div></div>`;
+}
+function renderMain(){
+  const v = $('#view');
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  $('#hdrSub').textContent = { cal:'근무 캘린더', alarm:'알람 그룹', set:'설정' }[tab];
+
+  if (tab === 'cal'){
+    const t = todayStr(), sh = shiftsOn(t);
+    const notif = !NATIVE && ('Notification' in window) && Notification.permission !== 'granted';
+    v.innerHTML = `
+      ${!S.enabled ? `<div class="banner">전체 알람이 꺼져 있어요. 설정에서 켤 수 있습니다.</div>` : ''}
+      <div class="card today-card">
+        <div class="muted small">오늘 · ${fmtDate(t)}</div>
+        <div class="row" style="margin-top:4px;gap:8px">
+          <span class="big">${sh.length ? sh.map(id=>esc(S.types[id].name)).join(' + ') : '일정 없음'}</span>
+        </div>
+        ${S.memos[t] ? `<div class="today-memo" data-a="day" data-d="${t}">📝 ${esc(S.memos[t])}</div>` : ''}
+        <div class="next-box" id="nextBox"></div>
+      </div>
+      <div class="card">${calHTML(calY, calM, true)}
+        <p class="muted small" style="margin:10px 0 0">날짜를 누르면 그날의 근무를 변경하거나 추가할 수 있어요. 알람도 자동으로 바뀝니다.</p>
+      </div>
+      ${notif ? `<div class="banner">이 앱(브라우저 탭)이 열려 있어야 알람이 울립니다.</div>` : ''}`;
+  }
+  else if (tab === 'alarm'){
+    if (flashGroup) openGroup = flashGroup; // 새로 만들었거나 설정이 필요한 그룹은 펼쳐서 보여줌
+    if (openGroup && !S.types[openGroup]) openGroup = null;
+    v.innerHTML = `<div class="card" style="padding:14px 18px"><p class="small muted" style="margin:0">
+        각 근무 유형별 알람 그룹입니다. 캘린더에서 그날 근무가 바뀌면, 그 근무의 알람 그룹이 울립니다. 그룹을 누르면 알람 시간을 보고 바꿀 수 있어요.</p></div>
+      ${groupsHTML(true)}
+      <div class="card"><h3>새 알람 그룹 추가</h3>
+        <div class="row"><input class="text-input" id="newTypeName" placeholder="예: 지원, 교육, 당직" maxlength="10">
+        <button class="small-btn" data-a="newTypeTab" style="padding:11px 14px">추가</button></div></div>`;
+    if (flashGroup){ const el = $('#g-'+flashGroup); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(()=>flashGroup=null, 1700); }
+  }
+  else {
+    const ovs = Object.keys(S.overrides).sort();
+    const perm = ('Notification' in window) ? Notification.permission : 'unsupported';
+    v.innerHTML = `
+      <div class="card">
+        <div class="list-row"><div><b>전체 알람</b><div class="small muted">끄면 모든 알람이 울리지 않아요</div></div>
+          <label class="switch"><input type="checkbox" data-c="master" ${S.enabled?'checked':''}><span></span></label></div>
+        <div class="list-row"><div style="flex:1"><b>기본 알람 소리</b><div class="small muted">그룹마다 따로 정하지 않으면 이 소리가 울려요</div>
+          <div class="row" style="margin-top:8px"><select class="snd-sel" data-c="sound">${soundOptions(S.sound, false)}</select>
+          <button class="small-btn" data-a="sndPlay" data-s="${S.sound}">▶ 듣기</button></div></div></div>
+        ${NATIVE ? nativePermRows() : `<div class="list-row"><div><b>알림 권한</b><div class="small muted">${perm==='granted'?'허용됨':perm==='denied'?'차단됨 — 브라우저 설정에서 허용하세요':perm==='unsupported'?'이 브라우저는 지원하지 않음':'아직 요청 안 함'}</div></div>
+          ${perm==='default'?'<button class="small-btn" data-a="perm">허용하기</button>':''}</div>`}
+        <div class="list-row"><div><b>알람 테스트</b><div class="small muted">소리·진동이 잘 나오는지 확인</div></div>
+          <button class="small-btn" data-a="test">테스트</button></div>
+      </div>
+      <div class="card"><h3>근무 패턴</h3>
+        <div class="preview">${S.pattern.map(id=>chip(id)).join('')}</div>
+        <p class="small muted" style="margin:4px 0 10px">기준: ${fmtDate(S.anchorDate)} = 패턴 ${S.anchorIndex+1}번째 칸</p>
+        <button class="ghost" data-a="resetup">패턴 다시 설정</button>
+      </div>
+      <div class="card"><h3>변경된 날짜 (${ovs.length})</h3>
+        ${ovs.length ? ovs.map(d=>`<div class="list-row"><div><div class="small">${fmtDate(d)}</div>
+          <div class="row" style="margin-top:4px">${baseShift(d)?chip(baseShift(d)):''} → ${S.overrides[d].length?S.overrides[d].map(id=>chip(id)).join(' '):'<span class="small muted">일정 없음</span>'}</div></div>
+          <button class="small-btn" data-a="ovDel" data-d="${d}">되돌리기</button></div>`).join('') : '<div class="empty">변경된 날짜가 없습니다.</div>'}
+      </div>
+      <button class="danger" data-a="wipe">모든 데이터 초기화</button>`;
+  }
+}
+
+/* 매 분 갱신되는 부분 */
+function updateLive(){
+  const n = new Date();
+  $('#clock').textContent = hm(n);
+  $('#masterState').textContent = S.setupDone ? (S.enabled ? '알람 켜짐' : '알람 꺼짐') : '';
+  const nb = $('#nextBox');
+  const up = S.setupDone ? upcoming(6) : [];
+  if (nb){
+    nb.innerHTML = up.length
+      ? `<div class="small muted">다음 알람</div><div style="font-size:18px;font-weight:800">${dayWord(up[0].date)} ${up[0].time}
+         <span style="font-size:14px;font-weight:600">· ${up[0].ids.map(id=>esc(S.types[id].name)).join('·')}</span></div>
+         <div class="small muted">${untilText(up[0].date, up[0].time)}</div>`
+      : `<div class="small muted">예정된 알람이 없습니다</div>`;
+  }
+  const ul = $('#upList');
+  if (ul){
+    ul.innerHTML = up.length ? up.map(a=>`<div class="up-item"><span class="t">${a.time}</span>
+      <div style="flex:1"><div class="small">${dayWord(a.date)}${dayWord(a.date).includes('월')?'':' · '+fmtDate(a.date)}</div>
+      <div class="row" style="gap:4px;margin-top:2px">${a.ids.map(id=>chip(id)).join('')}</div></div>
+      <span class="small muted">${untilText(a.date,a.time)}</span></div>`).join('')
+      : '<div class="empty">예정된 알람이 없습니다.</div>';
+  }
+}
+
+/* ===================== 날짜 편집 모달 ===================== */
+function openDay(date){ D = {date, sel:[...shiftsOn(date)], newName:'', newColor:nextColor(), adding:false, activate:[], memo:S.memos[date]||''}; renderDay(); }
+/* 그룹이 꺼져 있거나 켜진 시간이 없으면 '활성화'가 필요 */
+function needsActivate(id){ const g = S.groups[id]; return !!g && g.times.length > 0 && (!g.on || !g.times.some(t=>t.on)); }
+function activateGroup(id){ const g = S.groups[id]; if (!g) return; g.on = true; if (!g.times.some(t=>t.on)) g.times.forEach(t=>t.on=true); }
+function groupSummary(id){
+  const g = S.groups[id]; if (!g || !g.times.length) return '알람 시간 없음';
+  const on = g.times.filter(t=>t.on), list = (on.length ? on : g.times).map(t=>t.t);
+  return list.slice(0,3).join(', ') + (list.length>3 ? ` 외 ${list.length-3}개` : '');
+}
+function previewAlarms(){
+  const saved = {}; D.activate.forEach(id => { saved[id] = JSON.stringify(S.groups[id]); activateGroup(id); });
+  const r = alarmsFor(D.sel);
+  Object.keys(saved).forEach(id => { S.groups[id] = JSON.parse(saved[id]); });
+  return r;
+}
+function closeModal(){ D = null; $('#modal').classList.add('hidden'); $('#modal').innerHTML=''; }
+function renderDay(){
+  const base = baseShift(D.date);
+  const preview = previewAlarms();
+  const noTime = D.sel.filter(id => !S.types[id].off && !D.activate.includes(id) && (!S.groups[id] || !S.groups[id].on || !S.groups[id].times.some(t=>t.on)));
+  const candidates = typeOrder().filter(id => !D.sel.includes(id));
+  let addPanel = '';
+  if (D.adding === 'ask'){
+    addPanel = `<div class="card" style="background:#f8fafc;padding:14px">
+      <h3 style="margin-bottom:10px">어떤 알람을 울릴까요?</h3>
+      <div class="opt-grid" style="grid-template-columns:1fr 1fr;margin:0">
+        <button class="opt" data-a="mAddMode" data-m="existing" ${candidates.length?'':'disabled style="opacity:.4"'}>
+          <div class="nm" style="font-size:15px">기존 알람 그룹</div><div class="ds">이미 만든 그룹을<br>이 날에 켜기</div></button>
+        <button class="opt" data-a="mAddMode" data-m="new">
+          <div class="nm" style="font-size:15px">새 알람 그룹</div><div class="ds">새 근무와 그룹을<br>함께 만들기</div></button>
+      </div></div>`;
+  } else if (D.adding === 'existing'){
+    addPanel = `<div class="card" style="background:#f8fafc;padding:14px">
+      <div class="row between"><h3 style="margin:0">기존 알람 그룹 선택</h3><button class="link" data-a="mAddMode" data-m="ask">‹ 뒤로</button></div>
+      ${candidates.map(id => {
+        const g = S.groups[id] || {on:false, times:[]};
+        const st = !g.times.length ? '<span class="small muted">시간 없음</span>'
+          : needsActivate(id) ? '<span class="small" style="color:#b45309;font-weight:700">꺼짐 → 켜짐</span>'
+          : '<span class="small" style="color:var(--accent);font-weight:700">켜짐</span>';
+        return `<button class="list-row" style="width:100%;text-align:left" data-a="mPickExisting" data-id="${id}">
+          <div class="row" style="gap:8px;min-width:0">${chip(id)}<span class="small muted">${groupSummary(id)}</span></div>${st}</button>`;
+      }).join('')}</div>`;
+  } else if (D.adding === 'new'){
+    addPanel = `<div class="card" style="background:#f8fafc;padding:14px">
+      <div class="row between" style="margin-bottom:8px"><h3 style="margin:0">새 알람 그룹 만들기</h3><button class="link" data-a="mAddMode" data-m="ask">‹ 뒤로</button></div>
+      <div class="row"><input class="text-input" id="mNewName" placeholder="예: 지원" value="${esc(D.newName)}" maxlength="10">
+      <button class="small-btn" data-a="mAddType" style="padding:11px 14px">추가</button></div>
+      <div class="swatches">${PALETTE.map(c=>`<button class="${c===D.newColor?'on':''}" style="background:${c}" data-a="mColor" data-c="${c}"></button>`).join('')}</div>
+      <p class="small muted" style="margin:0">같은 이름의 근무와 알람 그룹이 함께 만들어지고, 저장 후 알람 시간을 설정할 수 있어요.</p></div>`;
+  }
+  $('#modal').classList.remove('hidden');
+  $('#modal').innerHTML = `<div class="sheet">
+    <div class="row between"><h2 style="margin:0">${fmtDate(D.date)}</h2><button class="del" data-a="mClose" style="font-size:22px">✕</button></div>
+    <p class="small muted" style="margin:4px 0 12px">기본 근무: ${base ? chip(base) : '없음'}</p>
+    <h3>이 날의 근무 <span class="small muted" style="font-weight:400">(여러 개 선택 가능)</span></h3>
+    <div class="sel-grid">${typeOrder().map(id=>{
+      const t=S.types[id], on=D.sel.includes(id);
+      return `<button class="${on?'on':''}" style="${on?`background:${t.color};border-color:${t.color}`:''}" data-a="mToggle" data-id="${id}">
+        ${on?'✓':`<span class="dot" style="background:${t.color}"></span>`} ${esc(t.name)}</button>`;}).join('')}
+      <button data-a="mAddOpen" style="border-style:dashed;color:var(--muted)">+ 새 근무</button>
+    </div>
+    ${addPanel}
+    ${D.activate.filter(id=>D.sel.includes(id)).map(id=>`<div class="warn" style="background:#eff6ff;color:#1e40af">✓ 저장하면 <b>${esc(S.types[id].name)}</b> 알람 그룹이 켜집니다.</div>`).join('')}
+    <h3 style="margin-top:14px">메모</h3>
+    <textarea id="mMemo" class="text-input memo-in" rows="3" maxlength="500" placeholder="예: 교육 09시, 회식, 근무 교대 요청 등">${esc(D.memo)}</textarea>
+    <h3 style="margin-top:14px">이 날 울릴 알람</h3>
+    <div>${preview.length ? `<div class="row wrap" style="gap:6px">${preview.map(a=>`<span class="chip" style="background:${S.types[a.ids[0]].color}">${a.time}</span>`).join('')}</div>`
+       : '<div class="empty">울릴 알람이 없습니다.</div>'}</div>
+    ${noTime.map(id=>`<div class="warn">⚠ <b>${esc(S.types[id].name)}</b> 알람 그룹에 켜진 시간이 없어요. 저장하면 알람 탭에서 바로 설정할 수 있어요.</div>`).join('')}
+    <div class="btns" style="margin-top:16px">
+      ${S.overrides[D.date] ? '<button class="ghost" data-a="mReset">기본값으로</button>' : ''}
+      <button class="primary" data-a="mSave">저장</button>
+    </div></div>`;
+}
+
+/* ===================== 확인 창 (브라우저 confirm 대신) ===================== */
+let pendingConfirm = null;
+function askConfirm(title, desc, okLabel, onOk, danger){
+  pendingConfirm = onOk;
+  $('#modal').classList.remove('hidden');
+  $('#modal').innerHTML = `<div class="sheet">
+    <h2>${title}</h2>
+    <p class="muted small" style="margin:6px 0 18px">${desc}</p>
+    <div class="btns"><button class="ghost" data-a="cfCancel">취소</button>
+    <button class="primary" data-a="cfOk" style="${danger?'background:var(--danger)':''}">${okLabel}</button></div></div>`;
+}
+
+/* ===================== 알람 엔진 ===================== */
+let audioCtx = null, ringTimer = null, ringStop = null, ringInfo = null;
+function ensureAudio(){
+  try{ if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+       if (audioCtx.state === 'suspended') audioCtx.resume(); }catch(e){}
+}
+/* ---------- 알람 소리 (WebAudio로 합성, 파일 불필요) ---------- */
+function tone(freq, at, dur, type='sine', vol=.25, opt={}){
+  const t0 = audioCtx.currentTime + at, osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = type; osc.frequency.setValueAtTime(freq, t0);
+  if (opt.to) osc.frequency.linearRampToValueAtTime(opt.to, t0 + dur * (opt.mid ? .5 : 1));
+  if (opt.mid) osc.frequency.linearRampToValueAtTime(freq, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol, t0 + (opt.attack || .015));
+  if (opt.hold) g.gain.setValueAtTime(vol, t0 + dur - .03);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g).connect(audioCtx.destination); osc.start(t0); osc.stop(t0 + dur + .05);
+}
+const SOUNDS = {
+  beep:    {name:'기본 삐삐',      period:1300, play(){ tone(880,0,.18,'square'); tone(880,.22,.18,'square'); tone(1046,.44,.18,'square'); }},
+  digital: {name:'디지털 시계',    period:1000, play(){ [0,.12,.24,.36].forEach(o=>tone(2000,o,.07,'square',.18,{hold:true})); }},
+  chime:   {name:'차임 (딩동)',    period:2200, play(){ tone(659,0,1.1,'sine',.35); tone(523,.55,1.4,'sine',.35); }},
+  bell:    {name:'벨',             period:1600, play(){ [0,.4].forEach(o=>{ tone(1318,o,1.1,'sine',.3); tone(2637,o,.6,'sine',.08); tone(659,o,1.2,'triangle',.12); }); }},
+  melody:  {name:'부드러운 멜로디', period:2400, play(){ [523,659,784,1046].forEach((f,i)=>tone(f,i*.22,.5,'triangle',.3)); }},
+  rooster: {name:'점점 커지는 소리', period:1300, play(){ const v = Math.min(.35, .05 + ringCount*.03); tone(740,0,.25,'sine',v); tone(988,.3,.25,'sine',v); }},
+  siren:   {name:'사이렌',         period:1600, play(){ tone(600,0,1.5,'sawtooth',.16,{to:1200,mid:true,hold:true}); }},
+  alert:   {name:'강한 경보',      period:900,  play(){ [0,.15,.3,.45].forEach(o=>tone(1400,o,.1,'sawtooth',.22,{hold:true})); }},
+  system:  {name:'휴대폰 기본 알람음', period:1300, nativeOnly:true, play(){ SOUNDS.beep.play(); }},
+};
+let ringCount = 0;
+function soundOf(ids){
+  const g = (ids||[]).map(id => S.groups[id]).find(g => g && g.sound && SOUNDS[g.sound]);
+  return g ? g.sound : (SOUNDS[S.sound] ? S.sound : 'beep');
+}
+function playSound(key){ ensureAudio(); if (!audioCtx) return; try{ (SOUNDS[key]||SOUNDS.beep).play(); }catch(e){} }
+let previewTimer = null;
+function previewSound(key){ if (NATIVE){ try{ NATIVE.preview(key); }catch(e){} return; } clearTimeout(previewTimer); ringCount = 3; playSound(key); }
+function soundOptions(sel, withDefault){
+  return (withDefault ? `<option value="" ${!sel?'selected':''}>기본 소리 (${esc(SOUNDS[S.sound]?.name||'')})</option>` : '') +
+    Object.entries(SOUNDS).filter(([,v]) => NATIVE || !v.nativeOnly).map(([k,v]) => `<option value="${k}" ${sel===k?'selected':''}>${v.name}</option>`).join('');
+}
+function startRing(time, ids, isTest){
+  stopRing(true); ensureAudio();
+  ringInfo = {time, ids};
+  const labels = ids.map(id => S.types[id] ? chip(id) : `<span class="chip" style="background:#64748b">${esc(id)}</span>`).join('');
+  $('#ring').classList.remove('hidden');
+  $('#ring').innerHTML = `<div class="small" style="opacity:.7">${isTest?'알람 테스트':fmtDate(todayStr())}</div>
+    <div class="rt">${time}</div><div class="labels">${labels}</div><div style="height:20px"></div>
+    <button class="stop" data-a="ringStop">끄기</button><button class="snooze" data-a="ringSnooze">5분 후 다시 알림</button>`;
+  const snd = SOUNDS[soundOf(ids)]; ringCount = 0;
+  const go = () => { ringCount++; playSound(soundOf(ids)); try{ navigator.vibrate && navigator.vibrate([400,200,400]); }catch(e){} };
+  go(); ringTimer = setInterval(go, snd.period);
+  // 자동으로 멈추지 않음: 사용자가 '끄기' 또는 '5분 후 다시 알림'을 누를 때까지 계속 울림
+  if (document.hidden && 'Notification' in window && Notification.permission === 'granted'){
+    try{ new Notification('⏰ ' + time + ' 알람', {body: ids.map(id=>S.types[id]?.name || id).join(', ') + ' 근무', requireInteraction:true}); }catch(e){}
+  }
+}
+function stopRing(silent){
+  clearInterval(ringTimer); clearTimeout(ringStop); ringTimer = ringStop = null;
+  $('#ring').classList.add('hidden'); $('#ring').innerHTML = '';
+  try{ navigator.vibrate && navigator.vibrate(0); }catch(e){}
+}
+let lastMinute = '';
+function tick(){
+  const n = new Date(), key = ymd(n) + ' ' + hm(n);
+  if (key === lastMinute) return; lastMinute = key;
+  updateLive();
+  if (!S.setupDone || !S.enabled || NATIVE) return;
+  if (S.lastFired === key) return;
+  const t = hm(n), hits = alarmsFor(shiftsOn(ymd(n))).find(a => a.time === t);
+  const snz = S.snoozes.filter(s => s.at === key);
+  S.snoozes = S.snoozes.filter(s => s.at > key);
+  if (hits || snz.length){
+    const ids = [...new Set([...(hits ? hits.ids : []), ...snz.flatMap(s => s.ids)])];
+    S.lastFired = key; save();
+    startRing(t, ids);
+  } else save();
+}
+setInterval(tick, 1000);
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden){ lastMinute=''; tick(); if (NATIVE){ scheduleNative(); if (S.setupDone && tab==='set') render(); } } });
+document.addEventListener('pointerdown', ensureAudio, {passive:true});
+
+/* ===================== 이벤트 ===================== */
+const A = {
+  /* 위저드 */
+  ex(el){ W.text = el.dataset.p; $('#pat').value = W.text; $('#patPreview').innerHTML = patternPreview(W.text); },
+  w1next(){
+    const chars = parsePattern(W.text);
+    if (chars.length < 2){ toast('근무 패턴을 2일 이상 입력하세요'); return; }
+    if (chars.length > 60){ toast('패턴은 60일 이하로 입력하세요'); return; }
+    [...new Set(chars)].forEach(c => {
+      if (!S.types[c]) S.types[c] = {name: DEFAULT_NAMES[c] || c+'근무', short:c, color: DEFAULT_COLORS[c] || nextColor(), off: OFF_CHARS.includes(c)};
+      if (!S.groups[c]) S.groups[c] = {on:true, times:(DEFAULT_ALARMS[c]||[]).map(t=>({t, on:true}))};
+    });
+    S.pattern = chars; W.step = 2; W.pickType = null; W.pickIdx = null; save(); render();
+  },
+  pickType(el){
+    W.pickType = el.dataset.id;
+    const pos = S.pattern.map((x,i)=>x===W.pickType?i:-1).filter(i=>i>=0);
+    W.pickIdx = pos.length === 1 ? pos[0] : null; render();
+  },
+  pickIdx(el){ W.pickIdx = +el.dataset.i; render(); },
+  w2next(){ S.anchorDate = todayStr(); S.anchorIndex = W.pickIdx; const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); W.step = 3; save(); render(); },
+  w3next(){ W.step = 4; render(); },
+  wBack(){ W.step--; render(); },
+  async w4done(){
+    S.setupDone = true; save(); tab = 'cal'; render(); toast('설정 완료! 근무에 맞춰 알람이 울립니다');
+    if ('Notification' in window && Notification.permission === 'default'){ try{ await Notification.requestPermission(); }catch(e){} }
+  },
+  /* 캘린더 */
+  calPrev(){ if (--calM < 0){ calM = 11; calY--; } render(); },
+  calNext(){ if (++calM > 11){ calM = 0; calY++; } render(); },
+  calToday(){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); render(); },
+  day(el){ openDay(el.dataset.d); },
+  tab(el){ tab = el.dataset.t; render(); window.scrollTo(0,0); },
+  /* 알람 그룹 */
+  tAdd(el){
+    const id = el.dataset.id; ensureGroup(id); const g = S.groups[id];
+    const last = g.times.length ? g.times[g.times.length-1].t : (S.types[id].off ? '08:00' : '06:00');
+    g.times.push({t: g.times.length ? addMin(last, 2) : last, on:true});
+    g.times.sort((a,b)=>a.t.localeCompare(b.t)); save(); render();
+  },
+  gOpen(el){
+    const id = el.dataset.id; openGroup = openGroup === id ? null : id; render();
+    const n = document.getElementById('g-'+id); if (n && openGroup) n.scrollIntoView({behavior:'smooth', block:'nearest'});
+  },
+  mvUp(el){ moveGroup(el.dataset.id, -1); },
+  mvDown(el){ moveGroup(el.dataset.id, 1); },
+  tDel(el){ S.groups[el.dataset.id].times.splice(+el.dataset.i, 1); save(); render(); },
+  typeDel(el){
+    const id = el.dataset.id, nm = S.types[id].name;
+    askConfirm(`'${esc(nm)}' 알람 그룹을 삭제할까요?`, `캘린더에 추가된 '${esc(nm)}' 일정도 함께 지워집니다.`, '삭제', () => {
+      delete S.types[id]; delete S.groups[id];
+      Object.keys(S.overrides).forEach(d => {
+        S.overrides[d] = S.overrides[d].filter(x => x !== id);
+        if (JSON.stringify(S.overrides[d]) === JSON.stringify([baseShift(d)].filter(Boolean))) delete S.overrides[d];
+      });
+      save(); render(); toast(`'${nm}' 삭제됨`);
+    }, true);
+  },
+  newTypeTab(){
+    const name = $('#newTypeName').value;
+    const id = addCustomType(name); if (!id){ toast('이름을 입력하세요'); return; }
+    S.groups[id].times.length || S.groups[id].times.push({t:'06:00', on:true});
+    flashGroup = id; save(); render(); toast(`'${S.types[id].name}' 알람 그룹이 추가됐어요`);
+  },
+  /* 모달 */
+  mClose(){ closeModal(); },
+  mToggle(el){
+    const id = el.dataset.id;
+    if (D.sel.includes(id)){ D.sel = D.sel.filter(x=>x!==id); D.activate = D.activate.filter(x=>x!==id); }
+    else D.sel = [...D.sel, id];
+    renderDay();
+  },
+  mAddOpen(){ D.adding = D.adding ? false : 'ask'; renderDay(); },
+  mAddMode(el){
+    D.adding = el.dataset.m; renderDay();
+    if (D.adding === 'new') setTimeout(()=>$('#mNewName')?.focus(), 50);
+  },
+  mPickExisting(el){
+    const id = el.dataset.id;
+    if (!D.sel.includes(id)) D.sel.push(id);
+    if (needsActivate(id) && !D.activate.includes(id)) D.activate.push(id);
+    D.adding = false; renderDay();
+  },
+  mColor(el){ D.newName = $('#mNewName').value; D.newColor = el.dataset.c; renderDay(); },
+  mAddType(){
+    const name = $('#mNewName').value; const id = addCustomType(name, D.newColor);
+    if (!id){ toast('근무 이름을 입력하세요'); return; }
+    if (!D.sel.includes(id)) D.sel.push(id);
+    D.adding = false; D.newName = ''; D.newColor = nextColor(); save(); renderDay();
+  },
+  mReset(){ const memo = ($('#mMemo') ? $('#mMemo').value : D.memo).trim(); if (memo) S.memos[D.date] = memo; else delete S.memos[D.date]; delete S.overrides[D.date]; save(); closeModal(); render(); toast('기본 근무로 되돌렸어요'); },
+  mSave(){
+    const date = D.date, base = [baseShift(date)].filter(Boolean);
+    const sel = typeOrder().filter(id => D.sel.includes(id));
+    if (JSON.stringify(sel) === JSON.stringify(base)) delete S.overrides[date]; else S.overrides[date] = sel;
+    const memo = ($('#mMemo') ? $('#mMemo').value : D.memo).trim();
+    if (memo) S.memos[date] = memo; else delete S.memos[date];
+    const activated = D.activate.filter(id => sel.includes(id));
+    activated.forEach(activateGroup);
+    const needs = sel.filter(id => !S.types[id].off && (!S.groups[id] || !S.groups[id].on || !S.groups[id].times.some(t=>t.on)));
+    save(); closeModal();
+    if (needs.length){ flashGroup = needs[0]; tab = 'alarm'; render(); toast(`'${S.types[needs[0]].name}' 알람 시간을 설정해 주세요`); }
+    else { render(); toast(activated.length ? `저장했어요. ${activated.map(id=>S.types[id].name).join(', ')} 알람 그룹을 켰어요` : '저장했어요. 알람이 근무에 맞게 바뀌었어요'); }
+  },
+  /* 울림 */
+  ringStop(){ stopRing(); },
+  ringSnooze(){
+    const n = new Date(); n.setMinutes(n.getMinutes()+5);
+    S.snoozes.push({at: ymd(n)+' '+hm(n), ids: ringInfo ? ringInfo.ids : []}); save(); stopRing(); toast(`${hm(n)}에 다시 울립니다`);
+  },
+  /* 설정 */
+  async perm(){ try{ await Notification.requestPermission(); }catch(e){} render(); },
+  sndPlay(el){ previewSound(el.dataset.s); },
+  colorPick(el){ colorPickFor = colorPickFor === el.dataset.id ? null : el.dataset.id; render(); },
+  colorSet(el){ S.types[el.dataset.id].color = el.dataset.c; colorPickFor = null; save(); render(); },
+  nPerm(el){ try{ NATIVE.openPerm(el.dataset.k); }catch(e){} },
+  test(){
+    const ids = typeOrder().filter(id=>!S.types[id].off).slice(0,1);
+    if (NATIVE){ try{ NATIVE.test(soundOf(ids), ids.map(id=>S.types[id].name).join(' · ') || '알람 테스트'); }catch(e){} return; }
+    startRing(hm(new Date()), typeOrder().filter(id=>!S.types[id].off).slice(0,1), true); },
+  resetup(){
+    askConfirm('근무 패턴을 다시 설정할까요?', '알람 그룹과 변경한 날짜는 유지됩니다.', '다시 설정', () => {
+      S.setupDone = false; W.step = 1; W.text = S.pattern.join(''); W.pickType = null; W.pickIdx = null; save(); render();
+    });
+  },
+  ovDel(el){ delete S.overrides[el.dataset.d]; save(); render(); },
+  wipe(){ askConfirm('모든 데이터를 초기화할까요?', '근무 패턴, 알람 그룹, 변경한 날짜가 모두 삭제됩니다.', '초기화', () => {
+    try{ localStorage.removeItem(STORE_KEY); }catch(e){} S = fresh(); W.step=1; W.text=''; render(); }, true); },
+  cfOk(){ const fn = pendingConfirm; pendingConfirm = null; closeModal(); if (fn) fn(); },
+  cfCancel(){ pendingConfirm = null; closeModal(); },
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  if (el.id === 'modal') return;
+  const fn = A[el.dataset.a]; if (fn) fn(el, e);
+});
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'mMemo' && D){ D.memo = e.target.value; return; }
+  if (e.target.id === 'pat'){ W.text = e.target.value; $('#patPreview').innerHTML = patternPreview(W.text); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (e.target.id === 'pat') A.w1next();
+  if (e.target.id === 'newTypeName') A.newTypeTab();
+  if (e.target.id === 'mNewName') A.mAddType();
+});
+document.addEventListener('change', e => {
+  const el = e.target, c = el.dataset.c; if (!c) return;
+  const id = el.dataset.id;
+  if (c === 'time'){ if (!el.value) return; const g = S.groups[id]; g.times[+el.dataset.i].t = el.value; g.times.sort((a,b)=>a.t.localeCompare(b.t)); }
+  else if (c === 'tOn') S.groups[id].times[+el.dataset.i].on = el.checked;
+  else if (c === 'gOn') S.groups[id].on = el.checked;
+  else if (c === 'tName'){ const v = el.value.trim(); if (v){ S.types[id].name = v; if (!S.pattern.includes(id)) S.types[id].short = v[0]; } }
+  else if (c === 'tColor') S.types[id].color = el.value;
+  else if (c === 'master') S.enabled = el.checked;
+  else if (c === 'sound'){ S.sound = el.value; previewSound(el.value); }
+  else if (c === 'gSound'){ S.groups[id].sound = el.value || null; previewSound(soundOf([id])); }
+  save(); render();
+});
+
+/* 시작 */
+if (!S.setupDone && S.pattern.length) W.text = S.pattern.join('');
+/* 안드로이드 뒤로가기: 창 닫기 → 캘린더 탭 → 앱 나가기 */
+window.handleBack = function(){
+  if (!$('#ring').classList.contains('hidden')){ stopRing(); return true; }
+  if (!$('#modal').classList.contains('hidden')){ pendingConfirm = null; closeModal(); return true; }
+  if (S.setupDone && tab !== 'cal'){ tab = 'cal'; render(); return true; }
+  if (!S.setupDone && W.step > 1){ W.step--; render(); return true; }
+  return false;
+};
+scheduleNative(); render(); tick();
+</script>
+</body>
+</html>
