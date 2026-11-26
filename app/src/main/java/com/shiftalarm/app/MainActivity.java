@@ -38,7 +38,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (web != null) web.onResume();
+        if (web != null){
+            web.onResume();
+            // 설정 화면에서 권한을 바꾸고 돌아오면 화면(권한 안내)을 바로 새로 그림
+            web.evaluateJavascript("window.onAppResume && window.onAppResume()", null);
+        }
     }
 
     @Override

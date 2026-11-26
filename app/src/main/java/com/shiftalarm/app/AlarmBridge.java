@@ -63,19 +63,20 @@ public class AlarmBridge {
     /** 권한 상태: {notif, exact, fullscreen, battery, overlay} */
     @JavascriptInterface
     public String permStatus() {
+        // 하나를 확인하다 오류가 나도 나머지는 제대로 알려 주도록 따로따로 확인
         JSONObject o = new JSONObject();
-        try {
-            NotificationManager nm = (NotificationManager) act.getSystemService(Context.NOTIFICATION_SERVICE);
-            AlarmManager am = (AlarmManager) act.getSystemService(Context.ALARM_SERVICE);
-            PowerManager pm = (PowerManager) act.getSystemService(Context.POWER_SERVICE);
-            o.put("notif", nm.areNotificationsEnabled());
-            o.put("exact", Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms());
-            o.put("fullscreen", Build.VERSION.SDK_INT < 34 || nm.canUseFullScreenIntent());
-            o.put("battery", pm.isIgnoringBatteryOptimizations(act.getPackageName()));
-            o.put("overlay", Settings.canDrawOverlays(act));
-        } catch (Exception ignored) { }
+        NotificationManager nm = (NotificationManager) act.getSystemService(Context.NOTIFICATION_SERVICE);
+        AlarmManager am = (AlarmManager) act.getSystemService(Context.ALARM_SERVICE);
+        PowerManager pm = (PowerManager) act.getSystemService(Context.POWER_SERVICE);
+        try { o.put("notif", nm.areNotificationsEnabled()); } catch (Exception e) { putTrue(o, "notif"); }
+        try { o.put("exact", Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms()); } catch (Exception e) { putTrue(o, "exact"); }
+        try { o.put("fullscreen", Build.VERSION.SDK_INT < 34 || nm.canUseFullScreenIntent()); } catch (Exception e) { putTrue(o, "fullscreen"); }
+        try { o.put("battery", pm.isIgnoringBatteryOptimizations(act.getPackageName())); } catch (Exception e) { putTrue(o, "battery"); }
+        try { o.put("overlay", Settings.canDrawOverlays(act)); } catch (Exception e) { putTrue(o, "overlay"); }
         return o.toString();
     }
+
+    private static void putTrue(JSONObject o, String k) { try { o.put(k, true); } catch (Exception ignored) { } }
 
     /** 해당 권한의 설정 화면 열기 */
     @JavascriptInterface

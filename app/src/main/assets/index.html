@@ -201,6 +201,37 @@
   .switch.sm input:checked+span::after{transform:translateX(16px)}
   .g-off .g-name{color:var(--muted)}
   .once-mini{color:#475569}
+  /* ---- 시간 줄: 휴대폰 폭에 맞춤 (겹치지 않게) ---- */
+  .time-row{gap:8px}
+  .tf{flex:0 0 auto;gap:6px}                     /* 숫자+오전/오후 묶음은 줄어들지 않게 */
+  .tf .tin{width:3.3em}
+  .time-row .tin{font-size:21px}
+  .ampm button{padding:6px 8px;font-size:12.5px}
+  .time-row .edit-btn{margin-left:auto;padding:6px 9px}   /* 수정·켜기·삭제는 오른쪽으로 */
+  .time-row .switch{width:42px;height:26px}
+  .time-row .switch span::after{width:20px;height:20px}
+  .time-row .switch input:checked+span::after{transform:translateX(16px)}
+  .time-row .del{width:26px}
+  /* 일회성 알람: 이름·울리는 날은 아랫줄로 */
+  .once-row{flex-wrap:wrap;row-gap:2px}
+  .once-row .o-meta{order:9;flex:1 0 100%;flex-direction:row;align-items:baseline;gap:8px;padding-left:2px}
+  .once-row .o-label{font-size:13.5px;padding:0}
+  /* 추가 줄: [시각 오전/오후] … [추가][✕], 이름 칸은 아랫줄 */
+  .add-row{flex-wrap:wrap;row-gap:8px}
+  .add-row .small-btn{margin-left:auto}
+  .once-add .o-label{order:9;flex:1 0 100% !important}
+  @media (max-width:340px){   /* 아주 좁은 화면: ✕ 대신 '수정' 화면에서 삭제 */
+    .time-row:not(.add-row) .del{display:none}
+  }
+  @media (max-width:360px){
+    .time-row .tin{font-size:19px}
+    .tf .tin{width:3.1em}
+    .ampm button{padding:5px 6px;font-size:12px}
+    .time-row .edit-btn{padding:5px 7px;font-size:12.5px}
+  }
+  .perm-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+  .perm-ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;background:#fff7e6;color:#b45309;flex:none}
+  .perm-item.ok .perm-ic{background:#d1fae5;color:#047857}
   .warn{color:#b45309;font-size:13px;background:#fffbeb;border-radius:10px;padding:8px 10px;margin-top:6px}
   /* ringing */
   .ring{position:fixed;inset:0;z-index:30;background:linear-gradient(160deg,#0f172a,#1e3a8a);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center}
@@ -549,7 +580,8 @@ function render(){
 }
 
 /* ---------- 초기 설정 ---------- */
-function stepsBar(){ return `<div class="steps">${[1,2,3,4].map(i=>`<i class="${i<=W.step?'on':''}"></i>`).join('')}</div>`; }
+function stepCount(){ return NATIVE ? 5 : 4; }
+function stepsBar(){ return `<div class="steps">${Array.from({length: stepCount()}, (_, k) => k + 1).map(i=>`<i class="${i<=W.step?'on':''}"></i>`).join('')}</div>`; }
 
 function parsePattern(text){ return [...text.replace(/\s|,|\/|-/g,'')]; }
 function patternPreview(text){
@@ -569,7 +601,7 @@ function patternPreview(text){
 }
 
 function renderWizard(){
-  $('#hdrSub').textContent = `초기 설정 ${W.step}/4`;
+  $('#hdrSub').textContent = `초기 설정 ${W.step}/${stepCount()}`;
   const v = $('#view');
   if (W.step === 1){
     v.innerHTML = stepsBar() + `
@@ -630,7 +662,29 @@ function renderWizard(){
       <div class="card" style="padding-bottom:10px"><h2>근무별 알람 설정</h2>
         <p class="muted small">근무 유형마다 알람 그룹을 만들어 두면, 캘린더의 근무에 따라 해당 그룹 알람이 울립니다.</p></div>
       ${groupsHTML(false)}
-      <button class="primary" data-a="w4done">설정 완료</button>`;
+      <button class="primary" data-a="w4done">${NATIVE ? '다음' : '설정 완료'}</button>`;
+    return;
+  }
+  if (W.step === 5){
+    // 앱에서만: 알람이 확실히 울리도록 권한을 처음에 한 번에 켜기
+    const p = nativePerms();
+    const lockOk = p.overlay || p.fullscreen;
+    const item = (ok, key, title, desc, must) => `<div class="perm-item ${ok?'ok':''}">
+        <div class="perm-ic">${ok ? '✓' : must ? '!' : '·'}</div>
+        <div style="flex:1;min-width:0"><b>${title}</b>${must ? '' : ' <span class="small muted">(권장)</span>'}<div class="small muted">${desc}</div></div>
+        ${ok ? '<span class="small" style="color:#047857;font-weight:700">허용됨</span>' : `<button class="small-btn" data-a="nPerm" data-k="${key}">허용하기</button>`}</div>`;
+    const allMust = p.notif && p.exact && lockOk;
+    $('#view').innerHTML = stepsBar() + `
+      <div class="card"><h2>알람 권한 켜기</h2>
+        <p class="muted small" style="margin-bottom:6px">화면이 꺼져 있어도 알람이 확실히 울리고 끄기 버튼이 뜨도록, 아래 권한을 켜 주세요. '허용하기'를 누르고 설정에서 켠 뒤 뒤로 오면 돼요.</p>
+        ${item(p.notif, 'notif', '알림', '알람이 울릴 때 알림과 알람 화면을 보여 줘요', true)}
+        ${item(p.exact, 'exact', '정확한 알람', '정해진 시각에 딱 맞춰 울려요', true)}
+        ${item(p.overlay, 'overlay', '다른 앱 위에 표시', '화면이 꺼져 있거나 잠겨 있어도 끄기 버튼이 있는 알람 화면을 바로 띄워요', !p.fullscreen)}
+        ${p.overlay ? '' : item(p.fullscreen, 'fullscreen', '잠금 화면 알람', '잠금 화면에 알람 화면을 띄워요', false)}
+        ${item(p.battery, 'battery', '배터리 최적화 제외', '삼성 등 일부 폰에서 알람이 늦거나 안 울리는 걸 막아요', false)}
+      </div>
+      <button class="primary" data-a="wPermDone">${allMust ? '설정 완료' : '나중에 하고 시작하기'}</button>
+      ${allMust ? '' : '<p class="small muted" style="text-align:center;margin-top:8px">나중에 설정 탭에서도 켤 수 있어요.</p>'}`;
   }
 }
 
@@ -711,7 +765,7 @@ function groupsHTML(full){
 /* 일회성 알람 목록 */
 function onceHTML(){
   const list = S.onceAlarms || [];
-  const rows = list.map((x, i) => `<div class="time-row ${x.on?'':'off'}">
+  const rows = list.map((x, i) => `<div class="time-row once-row ${x.on?'':'off'}">
       ${tfHTML(x.t, `data-c="oTime" data-i="${i}" readonly`)}
       <button class="edit-btn" data-a="dtOpen" data-k="o" data-i="${i}" aria-label="알람 수정">수정</button>
       <div class="o-meta"><span class="o-label">${esc(x.label||'') || '<span class="muted">이름 없음</span>'}</span>
@@ -721,7 +775,7 @@ function onceHTML(){
   return `<div class="sec-h"><h3>일회성 알람</h3><p class="small muted">한 번만 울리고 저절로 꺼져요. 기본 시계 앱 알람처럼 쓰면 돼요.</p></div>
     <div class="card" style="padding:8px 16px 14px">
       ${rows || (addingOnce ? '' : '<div class="empty" style="padding:10px 0 4px">아직 없어요.</div>')}
-      ${addingOnce ? `<div class="time-row add-row">
+      ${addingOnce ? `<div class="time-row add-row once-add">
         ${tfHTML('', 'id="newOnce"', '7:00')}
         <input class="o-label" id="newOnceLabel" placeholder="이름 (선택)" maxlength="12" style="flex:1;min-width:0">
         <button class="small-btn" data-a="oAddOk" style="padding:9px 14px">추가</button>
@@ -777,13 +831,18 @@ function rulesHTML(id){
 function nativePerms(){ let p = {}; try{ p = JSON.parse(NATIVE.permStatus()); }catch(e){} return p; }
 function permBanner(){
   if (!NATIVE) return '';
+  // 꼭 필요한 것만 안내: 알림, 정확한 알람, 잠금 화면에 띄우기('다른 앱 위에 표시' 또는 '잠금 화면 알람' 중 하나면 충분)
+  // 배터리 최적화 제외는 권장 사항이라 설정 탭에서만 보여 줌
   const p = nativePerms(), miss = [];
-  if (!p.notif) miss.push('알림'); if (!p.exact) miss.push('정확한 알람');
-  if (!p.fullscreen) miss.push('잠금 화면 알람'); if (!p.overlay) miss.push('다른 앱 위에 표시');
-  if (!p.battery) miss.push('배터리 최적화 제외');
+  if (p.notif === false) miss.push('알림');
+  if (p.exact === false) miss.push('정확한 알람');
+  if (p.overlay === false && p.fullscreen === false) miss.push('다른 앱 위에 표시');
   if (!miss.length) return '';
-  return `<div class="banner" style="display:flex;align-items:center;gap:10px"><div style="flex:1">알람이 화면이 꺼진 상태에서도 제대로 뜨려면 권한이 필요해요: <b>${miss.join(', ')}</b></div>
-    <button class="small-btn" data-a="tab" data-t="set">권한 설정</button></div>`;
+  const key = miss.join(',');
+  if (S.permHide === key) return '';
+  return `<div class="banner" style="display:flex;align-items:center;gap:8px"><div style="flex:1">알람이 화면이 꺼진 상태에서도 제대로 뜨려면 권한이 필요해요: <b>${miss.join(', ')}</b></div>
+    <button class="small-btn" data-a="tab" data-t="set">권한 설정</button>
+    <button class="del" data-a="permHide" data-k="${key}" aria-label="안내 닫기">✕</button></div>`;
 }
 function nativePermRows(){
   let p = {}; try{ p = JSON.parse(NATIVE.permStatus()); }catch(e){}
@@ -793,7 +852,7 @@ function nativePermRows(){
     + row(p.exact, '정확한 알람', '정해진 시각에 울리려면 필요해요', 'exact')
     + row(p.fullscreen, '잠금 화면 알람', '잠금 화면에 알람 화면을 띄워요', 'fullscreen')
     + row(p.overlay, '다른 앱 위에 표시', '화면이 꺼져 있어도 끄기 버튼이 있는 알람 화면을 바로 띄워요', 'overlay')
-    + row(p.battery, '배터리 최적화 제외', '삼성 등 일부 폰에서 알람이 늦거나 안 울리는 걸 막아요', 'battery')
+    + row(p.battery, '배터리 최적화 제외 (권장)', '삼성 등 일부 폰에서 알람이 늦거나 안 울리는 걸 막아요', 'battery')
     + `<div class="list-row"><div><b>예약된 알람</b><div class="small muted">${nativeUntil ? fmtDate(ymd(new Date(nativeUntil)))+'까지 휴대폰에 예약됨 · 앱을 열 때마다 연장돼요' : '예약된 알람 없음'}</div></div></div>`;
 }
 function renderMain(){
@@ -1062,7 +1121,7 @@ function renderDay(){
     ${onceOn(D.date).map(x => `<div class="time-row" style="padding:6px 0">
         <b style="font-size:17px">${fmt12(x.t)}</b><span class="small muted" style="flex:1">${esc(x.label || '')}${isWeekly(x) ? ' · ' + onceWhen(x) : ''}</span>
         ${isWeekly(x) ? '' : `<button class="del" data-a="mOnceDel" data-id="${x.id}" aria-label="삭제">✕</button>`}</div>`).join('')}
-    ${D.onceAdding ? `<div class="time-row add-row">
+    ${D.onceAdding ? `<div class="time-row add-row once-add">
         ${tfHTML('', 'id="dayOnce"', '7:00')}
         <input class="o-label" id="dayOnceLabel" placeholder="이름 (선택)" maxlength="12" style="flex:1;min-width:0">
         <button class="small-btn" data-a="mOnceAdd" style="padding:9px 12px">추가</button>
@@ -1199,7 +1258,7 @@ function tick(){
 }
 setInterval(tick, 1000);
 
-document.addEventListener('visibilitychange', () => { if (!document.hidden){ lastMinute=''; tick(); if (NATIVE){ scheduleNative(); if (S.setupDone && tab!=='alarm') render(); } } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden){ lastMinute=''; tick(); if (NATIVE){ scheduleNative(); if ((S.setupDone && tab!=='alarm') || (!S.setupDone && W.step === 5)) render(); } } });
 document.addEventListener('pointerdown', ensureAudio, {passive:true});
 
 /* ===================== 이벤트 ===================== */
@@ -1225,7 +1284,8 @@ const A = {
   w2next(){ S.anchorDate = todayStr(); S.anchorIndex = W.pickIdx; const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); W.step = 3; save(); render(); },
   w3next(){ W.step = 4; render(); },
   wBack(){ W.step--; render(); },
-  async w4done(){
+  w4done(){ if (NATIVE){ W.step = 5; render(); window.scrollTo(0,0); } else A.wPermDone(); },
+  async wPermDone(){
     S.setupDone = true; save(); tab = 'cal'; render(); toast('설정 완료! 근무에 맞춰 알람이 울립니다'); setTimeout(sendStats, 1500);
     if ('Notification' in window && Notification.permission === 'default'){ try{ await Notification.requestPermission(); }catch(e){} }
   },
@@ -1466,6 +1526,7 @@ const A = {
   /* 설정 */
   async perm(){ try{ await Notification.requestPermission(); }catch(e){} render(); },
   sndPlay(el){ previewSound(el.dataset.s); },
+  permHide(el){ S.permHide = el.dataset.k; save(); render(); },
   colorPick(el){ colorPickFor = colorPickFor === el.dataset.id ? null : el.dataset.id; render(); },
   colorSet(el){ S.types[el.dataset.id].color = el.dataset.c; colorPickFor = null; save(); render(); },
   doUpdate(){ startUpdate(); },
@@ -1587,6 +1648,13 @@ document.addEventListener('change', e => {
 
 /* 시작 */
 if (!S.setupDone && S.pattern.length) W.text = S.pattern.join('');
+/* 안드로이드: 앱으로 돌아올 때(설정 화면에서 권한을 바꾸고 온 경우 등) 화면 새로 그리기 */
+window.onAppResume = function(){
+  if (!S.setupDone) return;
+  scheduleNative();
+  if (!document.activeElement || !document.activeElement.matches('input, textarea')) render();
+};
+
 /* 안드로이드 뒤로가기: 창 닫기 → 캘린더 탭 → 앱 나가기 */
 window.handleBack = function(){
   if (!$('#ring').classList.contains('hidden')){ stopRing(); return true; }
