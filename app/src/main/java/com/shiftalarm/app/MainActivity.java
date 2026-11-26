@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
         s.setTextZoom(100);                    // 시스템 글자 크기에 레이아웃이 깨지지 않게
         web.setWebViewClient(new WebViewClient());
         web.setWebChromeClient(new WebChromeClient());
-        web.addJavascriptInterface(new AlarmBridge(this), "NativeAlarm");
+        web.addJavascriptInterface(new AlarmBridge(this, web), "NativeAlarm");
         web.loadUrl("file:///android_asset/index.html");
         setContentView(web);
 

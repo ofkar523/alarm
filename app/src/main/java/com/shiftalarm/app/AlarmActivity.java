@@ -47,7 +47,7 @@ public class AlarmActivity extends Activity {
 
         TextView date = text(new SimpleDateFormat("M월 d일 (E)", Locale.KOREA).format(new Date()), 16, false);
         date.setAlpha(0.7f);
-        timeView = text("", 76, true);
+        timeView = text("", 60, true);
         labelView = text("", 22, true);
         labelView.setPadding(0, dp(4), 0, dp(48));
 

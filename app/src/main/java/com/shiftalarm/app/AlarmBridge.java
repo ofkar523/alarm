@@ -16,8 +16,16 @@ import org.json.JSONObject;
 /** index.html 에서 window.NativeAlarm 으로 호출하는 함수들 */
 public class AlarmBridge {
     private final Activity act;
+    private final android.webkit.WebView web;
 
-    AlarmBridge(Activity act) { this.act = act; }
+    AlarmBridge(Activity act, android.webkit.WebView web) { this.act = act; this.web = web; }
+
+    /** 새 버전 APK를 내려받아 설치 화면 띄우기 */
+    @JavascriptInterface
+    public void update(String apkUrl) {
+        if (apkUrl == null || !apkUrl.startsWith("https://")) return;
+        Updater.start(act, web, apkUrl);
+    }
 
     /** 앞으로 울릴 알람 목록(JSON 배열)을 받아 휴대폰 알람에 예약 */
     @JavascriptInterface
@@ -42,7 +50,17 @@ public class AlarmBridge {
         act.runOnUiThread(() -> Sounds.preview(act, sound));
     }
 
-    /** 권한 상태: {notif, exact, fullscreen, battery} */
+    /** 앱 버전 (예: 1.0.12) */
+    @JavascriptInterface
+    public String appVersion() {
+        try {
+            return act.getPackageManager().getPackageInfo(act.getPackageName(), 0).versionName;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** 권한 상태: {notif, exact, fullscreen, battery, overlay} */
     @JavascriptInterface
     public String permStatus() {
         JSONObject o = new JSONObject();

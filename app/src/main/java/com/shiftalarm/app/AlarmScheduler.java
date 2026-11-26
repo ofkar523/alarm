@@ -24,7 +24,7 @@ public class AlarmScheduler {
     }
 
     static String hhmm(long ms) {
-        return new SimpleDateFormat("HH:mm", Locale.KOREA).format(new Date(ms));
+        return new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(ms));
     }
 
     /** 기존 예약을 모두 지우고 목록대로 다시 예약 */

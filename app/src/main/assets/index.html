@@ -67,10 +67,10 @@
   .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .cal-head b{font-size:17px}
   .icon{width:38px;height:38px;border-radius:10px;background:#f1f5f9;font-size:22px;line-height:1}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
   .wd{text-align:center;font-size:12px;color:var(--muted);padding:4px 0;font-weight:600}
   .sun{color:#ef4444!important} .sat{color:#3b82f6!important}
-  .cell{min-height:64px;border-radius:10px;background:#f8fafc;padding:4px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;border:2px solid transparent}
+  .cell{min-width:0;overflow:hidden;min-height:64px;border-radius:10px;background:#f8fafc;padding:4px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;border:2px solid transparent}
   .cell[data-a]{cursor:pointer}
   .cell[data-a]:active{background:#e2e8f0}
   .cell .dn{font-size:13px;font-weight:600}
@@ -92,12 +92,12 @@
   .color-in{width:28px;height:28px;border:0;padding:0;background:none;border-radius:50%;overflow:hidden;flex:none}
   .color-in::-webkit-color-swatch-wrapper{padding:0}.color-in::-webkit-color-swatch{border:0;border-radius:50%}
   .time-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
-  .time-row input[type=time]{font-size:22px;font-weight:700;border:0;background:none;outline:none;flex:1;min-width:0}
-  .time-row.off input[type=time]{color:#cbd5e1}
+  .time-row input[type=time],.time-row .tin{font-size:22px;font-weight:700;border:0;background:none;outline:none;flex:1;min-width:0}
+  .time-row.off input[type=time],.time-row.off .tin{color:#cbd5e1}
   .g-row{display:flex;align-items:center;gap:10px;width:100%;padding:14px 0;text-align:left}
   .g-row .g-name{flex:1;font-weight:700;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .g-row .chev{color:#94a3b8;font-size:20px;width:16px;text-align:center}
-  .badge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+  .badge{white-space:nowrap;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
   .badge.off{background:#f1f5f9;color:#94a3b8}
   .badge.none{background:#fffbeb;color:#b45309}
   .mv{width:36px;height:34px;border-radius:10px;background:#f1f5f9;color:#475569;font-size:13px}
@@ -137,6 +137,70 @@
   .seg button{flex:1;padding:9px 6px;border-radius:10px;border:2px solid var(--line);background:#fff;font-weight:700;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:1px}
   .seg button small{font-weight:400;font-size:11px;color:var(--muted)}
   .seg button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+  .keep-ask{background:#fff7e6;border:2px solid #fbbf24;padding:14px;margin:4px 0 10px;box-shadow:none}
+  .upd-banner{display:flex;align-items:center;gap:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#1e3a8a;border-radius:12px;padding:11px 12px;margin-bottom:14px;font-size:14px}
+  .upd-bar{display:inline-block;width:90px;height:6px;background:#c7d2fe;border-radius:3px;vertical-align:middle;margin-left:6px;overflow:hidden}
+  .upd-bar i{display:block;height:100%;background:var(--accent)}
+  .add-row{background:var(--accent-soft);border-radius:10px;padding:6px 10px;border-top:0;margin-top:6px}
+  .add-row .tin{color:var(--accent)}
+  .add-row .tin::placeholder{color:#93c5fd}
+  .rules{margin-top:10px;display:grid;gap:8px}
+  .rule{background:var(--bg);border-radius:12px;padding:10px 10px 10px 12px;display:grid;gap:8px}
+  .rule-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px}
+  .rule-line .snd-sel{flex:1 1 90px}
+  .pills{display:flex;flex-wrap:wrap;gap:5px}
+  .pills button{padding:6px 10px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:700}
+  .pills button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .pills button.sun:not(.on){color:#ef4444} .pills button.sat:not(.on){color:#3b82f6}
+  .rule-mini{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:10px;font-weight:800;line-height:1.1;white-space:nowrap}
+  .card > .time-row:first-child{border-top:0}
+  .sec-h{margin:18px 4px 8px}
+  .sec-h:first-child{margin-top:2px}
+  .sec-h h3{margin:0;font-size:16px}
+  .sec-h p{margin:2px 0 0}
+  .o-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+  .o-label{border:0;background:none;outline:none;font:inherit;font-size:14px;font-weight:600;padding:2px 0;min-width:0;border-bottom:1px dashed transparent}
+  .o-label:focus{border-bottom-color:var(--accent)}
+  .add-row .o-label{background:#fff;border-radius:8px;padding:7px 9px}
+  .tf{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+  .tf .tin{width:4.2em;flex:0 0 auto}
+  .ampm{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+  .ampm button{padding:6px 9px;font-size:13px;font-weight:700;color:var(--muted);background:#fff}
+  .ampm button.on{background:var(--ink);color:#fff}
+  .time-row.off .ampm button.on{background:#cbd5e1}
+  .add-row .tf{flex:0 1 auto}
+  .g-row.sum{align-items:center;padding:12px 0}
+  .g-sum{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+  .g-top{display:flex;align-items:center;gap:6px;font-size:14px}
+  .g-times{font-size:19px;font-weight:800;letter-spacing:-.3px;line-height:1.3}
+  .g-mode{font-size:12.5px;color:var(--muted)}
+  .sum-empty{font-size:14px;font-weight:600;color:#b45309}
+  .group-card.dim .g-times{color:#94a3b8}
+  .g-modeline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 0 6px}
+  .g-modeline .g-mode{font-size:13.5px}
+  .g-edit{background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+  .g-edit .group-head{margin-bottom:6px}
+  .edit-btn{flex:none;padding:6px 10px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:700;color:var(--ink)}
+  .edit-btn.red{color:var(--danger);border-color:#fecaca}
+  .tin[readonly]{cursor:default}
+  .tin.editing{background:var(--accent-soft);border-radius:8px;padding:0 6px}
+  .manage{background:var(--bg);box-shadow:none;padding:6px 12px;margin:0 0 10px}
+  .m-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line)}
+  .m-row:first-child{border-top:0}
+  .m-row.edit,.m-row.del-ask{display:block}
+  button.g-modeline{width:100%;text-align:left;background:none;border-radius:8px}
+  button.g-modeline:active{background:var(--bg)}
+  .sheet.detail .dt-time{display:flex;justify-content:center;padding:16px 0 6px}
+  .sheet.detail .dt-time .tin{font-size:40px;font-weight:800;width:3.4em;text-align:center;border:0;border-bottom:2px solid var(--line);outline:none;background:none}
+  .sheet.detail .dt-time .tin:focus{border-bottom-color:var(--accent)}
+  .sheet.detail .dt-time .ampm button{padding:10px 14px;font-size:15px}
+  .dt-lab{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 6px}
+  .red-txt{color:var(--danger)}
+  .switch.sm{width:40px;height:24px}
+  .switch.sm span::after{width:18px;height:18px}
+  .switch.sm input:checked+span::after{transform:translateX(16px)}
+  .g-off .g-name{color:var(--muted)}
+  .once-mini{color:#475569}
   .warn{color:#b45309;font-size:13px;background:#fffbeb;border-radius:10px;padding:8px 10px;margin-top:6px}
   /* ringing */
   .ring{position:fixed;inset:0;z-index:30;background:linear-gradient(160deg,#0f172a,#1e3a8a);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center}
@@ -177,9 +241,14 @@
 <script>
 /* ===================== 기본 데이터 ===================== */
 const STORE_KEY = 'shiftAlarm.v1';
+/* ▼ 익명 사용 통계를 받을 주소. Vercel에 배포한 주소 뒤에 /api/collect 를 붙여 넣으세요.
+     예: 'https://alarm-stats.vercel.app/api/collect'   (비워 두면 통계를 보내지 않아요) */
+const STATS_URL = 'https://alarm-stats.vercel.app/api/collect';
+/* 새 버전을 확인할 GitHub 저장소 (Releases 에 올린 .apk 를 확인) */
+const UPDATE_REPO = 'ofkar523/alarm';
 const DEFAULT_NAMES  = {주:'주간', 야:'야간', 휴:'휴일', 비:'비번', 오:'오후', 지:'지원', 당:'당직', 석:'석간', 새:'새벽', 교:'교육'};
 const DEFAULT_COLORS = {주:'#f59e0b', 야:'#6366f1', 휴:'#10b981', 비:'#94a3b8', 오:'#0ea5e9', 지:'#ef4444', 당:'#ec4899', 교:'#8b5cf6'};
-const DEFAULT_ALARMS = {주:['05:30','05:32','05:35'], 야:['17:30','17:32','17:35']};
+const DEFAULT_ALARMS = {}; // 알람 시간은 미리 채우지 않음 (사용자가 직접 추가)
 const OFF_CHARS = ['휴','비'];
 const PALETTE = ['#f59e0b','#6366f1','#10b981','#ef4444','#0ea5e9','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b','#84cc16','#a855f7'];
 const WD = ['일','월','화','수','목','금','토'];
@@ -212,7 +281,7 @@ function scheduleNative(){
   if (!NATIVE) return;
   const now = Date.now();
   const list = S.setupDone ? alarmEntries(45).filter(e => e.at > now + 1000).slice(0, 300)
-    .map(e => ({at:e.at, time:e.time, label:e.ids.map(id=>S.types[id].name).join(' · '), sound:soundOf(e.ids)})) : [];
+    .map(e => ({at:e.at, time:fmt12(e.time), label:entryNames(e).join(' · '), sound:soundOf(e.ids)})) : [];
   nativeUntil = list.length ? list[list.length-1].at : null;
   try{ NATIVE.schedule(JSON.stringify(list)); }catch(e){}
 }
@@ -220,11 +289,23 @@ let S = Object.assign(fresh(), load() || {});
 if (!S.memos) S.memos = {};
 if (!S.sound) S.sound = 'beep';
 delete S.wake;
+if (!Array.isArray(S.onceAlarms)) S.onceAlarms = [];
+S.pattern.forEach(id => { if (S.types[id] && S.types[id].off && S.groups[id] && !S.groups[id].times.length) delete S.groups[id]; });
 Object.keys(S.groups).forEach(id => {
   const g = S.groups[id];
-  if (S.pattern.includes(id) || g.mode) return;
-  const used = Object.values(S.overrides).some(list => list.includes(id));
-  g.mode = used ? 'calendar' : 'once';
+  if (S.pattern.includes(id) || !S.types[id]) return;
+  // 패턴에 없는 그룹은 모두 '특정 근무마다' 또는 '직접 정한 규칙'으로 울림
+  //  - 캘린더에서 만든 근무(예: 지원): 기본은 그 근무가 있는 날
+  //  - 알람 탭에서 만든 알람 전용 그룹: 고른 근무가 있는 날
+  if (!g.mode || g.mode === 'calendar'){ g.mode = 'shift'; g.shifts = g.shifts || (S.types[id].alarmOnly ? [] : [id]); }
+  if (g.mode === 'shift' && !g.shifts) g.shifts = S.types[id].alarmOnly ? [] : [id];
+  if (g.mode === 'once'){
+    // 예전 '한 번만' 알람 그룹 → 일회성 알람으로 옮김
+    const name = S.types[id] ? S.types[id].name : '';
+    g.times.forEach(x => S.onceAlarms.push({id: 'o' + Math.random().toString(36).slice(2, 9), t: x.t, on: !!(x.on && g.on), at: x.at, label: name}));
+    delete S.groups[id]; delete S.types[id];
+    Object.keys(S.overrides).forEach(d => { S.overrides[d] = S.overrides[d].filter(x => x !== id); });
+  }
 });
 expireOnce();
 
@@ -235,7 +316,7 @@ function baseShift(date){
   return S.pattern[i];
 }
 function shiftsOn(date){
-  if (S.overrides[date]) return S.overrides[date].filter(id => S.types[id]);
+  if (S.overrides[date]) return S.overrides[date].filter(id => S.types[id] && !S.types[id].alarmOnly);
   const b = baseShift(date); return b && S.types[b] ? [b] : [];
 }
 function alarmsFor(ids){
@@ -246,48 +327,141 @@ function alarmsFor(ids){
   });
   return Object.keys(map).sort().map(time => ({time, ids: map[time]}));
 }
-/* ---------- 한 번 울리는 알람 그룹 (패턴에 없는 그룹, 방식 = 'once') ----------
+/* ---------- 일회성 알람 (기본 시계 앱처럼) ----------
    켠 시각 기준으로 '가장 가까운' 그 시각에 한 번 울리고, 울린 뒤에는 자동으로 꺼집니다. */
-function isOnce(id){ return !S.pattern.includes(id) && !!S.groups[id] && S.groups[id].mode === 'once'; }
+function isOnce(id){ return false; } // (예전 '한 번만' 그룹 방식은 일회성 알람으로 바뀜)
 function atOf(date, time){ const [h,m] = time.split(':').map(Number), d = parseYmd(date); d.setHours(h, m, 0, 0); return d.getTime(); }
 function nextAt(time){ const today = todayStr(); let at = atOf(today, time); if (at <= Date.now() + 15000) at = atOf(addDays(today, 1), time); return at; }
-function arm(x){ if (x.on) x.at = nextAt(x.t); else delete x.at; }
-function oneShots(){
-  const out = [];
-  Object.keys(S.groups).forEach(id => {
-    if (!isOnce(id) || !S.types[id]) return; const g = S.groups[id]; if (!g.on) return;
-    g.times.forEach(x => { if (x.on && x.at) out.push({at:x.at, time:x.t, ids:[id]}); });
-  });
-  return out;
+/* 일회성 알람 x = {t, on, label, date?, days?}
+   - days(요일)가 있으면 그 요일마다 반복 (꺼지지 않음)
+   - date(날짜)가 있으면 그날 한 번
+   - 둘 다 없으면 가장 가까운 그 시각에 한 번 */
+function isWeekly(x){ return !!(x.days && x.days.length); }
+function arm(x){
+  if (!x.on || isWeekly(x)){ delete x.at; return; }
+  x.at = x.date ? atOf(x.date, x.t) : nextAt(x.t);
 }
+function oneShots(){
+  return (S.onceAlarms || []).filter(x => x.on && x.at && !isWeekly(x)).map(x => ({at:x.at, time:x.t, ids:[], labels:[x.label || '일회성 알람']}));
+}
+/* 이 날 울리는 일회성 알람들 */
+function onceOn(date){
+  const wd = parseYmd(date).getDay();
+  return (S.onceAlarms || []).filter(x => x.on && (isWeekly(x) ? x.days.includes(wd) : (x.at && ymd(new Date(x.at)) === date)));
+}
+/* 일회성 알람이 언제 울리는지 짧게: '매주 월·수' / '12/3(수) 울림' / '내일 울림' */
+function onceWhen(x){
+  if (isWeekly(x)) return '매주 ' + [1,2,3,4,5,6,0].filter(d => x.days.includes(d)).map(d => WD[d]).join('·');
+  if (!x.on || !x.at) return x.date ? mdw(x.date) + ' · 꺼짐' : '꺼짐';
+  const d = ymd(new Date(x.at)), k = diffDays(todayStr(), d);
+  return (k >= 0 && k <= 2 ? dayWord(d) : mdw(d)) + ' 울림';
+}
+function mdw(d){ const x = parseYmd(d); return `${x.getMonth()+1}/${x.getDate()}(${WD[x.getDay()]})`; }
 /* 울린 지 1분이 지난 한 번 알람은 끄기. 바뀐 게 있으면 true */
 function expireOnce(){
   let changed = false; const lim = Date.now() - 60000;
-  Object.keys(S.groups).forEach(id => {
-    if (!isOnce(id)) return;
-    S.groups[id].times.forEach(x => {
-      if (x.on && !x.at){ arm(x); changed = true; }
-      else if (x.on && x.at < lim){ x.on = false; delete x.at; changed = true; }
-    });
+  (S.onceAlarms || []).forEach(x => {
+    if (isWeekly(x)) return;
+    if (x.on && !x.at){ arm(x); changed = true; }
+    else if (x.on && x.at < lim){ x.on = false; delete x.at; changed = true; }
   });
   return changed;
 }
+/* ---------- 반복 규칙 알람 그룹 (패턴에 없는 그룹, 방식 = 'repeat') ----------
+   규칙 종류 (하나라도 맞으면 그날 울림)
+   - after  : prev 근무 다음에 이어지는 target 근무 중 nth번째 날   예) 주간 다음 휴일 중 첫째 날
+   - weekday: 고른 요일 (shift 를 고르면 그 근무인 날만)             예) 월요일, 휴일인 토요일
+   - shift  : target 근무인 날 전부                                   예) 휴일마다           */
+function isRepeat(id){ return isAlarmOnly(id) && !!S.groups[id] && S.groups[id].mode === 'repeat'; }
+function isShiftMode(id){ return isAlarmOnly(id) && !!S.groups[id] && S.groups[id].mode === 'shift'; }
+/* 알람 전용 그룹이 이 날 울리는지 */
+function groupMatches(id, date){
+  const g = S.groups[id];
+  if (isShiftMode(id)) return (g.shifts||[]).some(x => hasShift(date, x));
+  if (isRepeat(id)) return (g.rules||[]).some(r => ruleMatch(r, date));
+  return false;
+}
+function hasShift(date, id){ return shiftsOn(date).includes(id); }
+function ruleMatch(r, date){
+  if (r.kind === 'weekday') return (r.days||[]).includes(parseYmd(date).getDay()) && (!r.shift || hasShift(date, r.shift));
+  if (r.kind === 'shift') return !!r.target && hasShift(date, r.target);
+  if (r.kind === 'after'){
+    if (!r.target || !hasShift(date, r.target)) return false;
+    let pos = 1, d = addDays(date, -1);
+    while (pos < 62 && hasShift(d, r.target)){ pos++; d = addDays(d, -1); }
+    return !!r.prev && hasShift(d, r.prev) && (r.nth||[]).includes(pos);
+  }
+  return false;
+}
+function ruleIdsOn(date){
+  return Object.keys(S.groups).filter(id => S.types[id] && S.groups[id].on && groupMatches(id, date));
+}
+function idsOn(date){ return [...new Set([...shiftsOn(date), ...ruleIdsOn(date)])]; }
+const NTH = ['첫째','둘째','셋째','넷째'];
+function ruleText(r){
+  const nm = id => S.types[id] ? S.types[id].name : '?';
+  if (r.kind === 'after') return `${nm(r.prev)} 다음 ${nm(r.target)} 중 ${(r.nth||[]).slice().sort().map(n=>NTH[n-1]).join('·') || '(날 선택 안 함)'} 날`;
+  if (r.kind === 'weekday') return `${(r.days||[]).slice().sort().map(d=>WD[d]).join('·') || '(요일 선택 안 함)'}요일${r.shift ? ' 중 '+nm(r.shift)+'인 날' : ''}`;
+  return `${nm(r.target)}인 날마다`;
+}
+/* 짧은 설명: '주간 후 첫 휴일마다', '월·수요일마다' */
+function ruleShort(r){
+  const nm = id => S.types[id] ? S.types[id].name : '?';
+  if (r.kind === 'after'){
+    const n = (r.nth||[]).slice().sort();
+    if (!n.length) return '';
+    const ord = n.length === 1 && n[0] === 1 ? '첫' : n.map(x => NTH[x-1]).join('·');
+    return `${nm(r.prev)} 후 ${ord} ${nm(r.target)}마다`;
+  }
+  if (r.kind === 'weekday'){
+    const d = [1,2,3,4,5,6,0].filter(x => (r.days||[]).includes(x));
+    if (!d.length) return '';
+    return `${r.shift ? nm(r.shift) + '인 ' : ''}${d.map(x => WD[x]).join('·')}요일마다`;
+  }
+  return r.target ? `${nm(r.target)}마다` : '';
+}
+function modeText(id){
+  const g = S.groups[id];
+  if (!isAlarmOnly(id)) return `${S.types[id].name} 근무마다`;
+  if (isRepeat(id)){ const t = (g.rules||[]).map(ruleShort).filter(Boolean); return t.length ? t.join(', ') : '규칙을 정해 주세요'; }
+  const sh = (g.shifts||[]).filter(x => S.types[x]);
+  return sh.length ? sh.map(x => S.types[x].name).join('·') + ' 근무마다' : '근무를 골라 주세요';
+}
+function nextRuleDays(id, n){
+  const out = [], today = todayStr(), g = S.groups[id];
+  for (let k=0; k<90 && out.length<n; k++){ const d = addDays(today, k); if (groupMatches(id, d)) out.push(d); }
+  return out;
+}
+function defaultRule(kind){
+  const uniq = [...new Set(S.pattern)].filter(x => S.types[x]);
+  const work = uniq.find(x => !S.types[x].off) || uniq[0], off = uniq.find(x => S.types[x].off) || uniq[0];
+  if (kind === 'weekday') return {kind, days:[1], shift:''};
+  if (kind === 'shift') return {kind, target: off};
+  return {kind:'after', prev: work, target: off, nth:[1]};
+}
+
 /* 앞으로 days일 동안 울릴 알람 전체 (같은 시각은 하나로 합침) */
 function alarmEntries(days){
   if (!S.enabled) return [];
   const map = {}, from = Date.now() - 60000, today = todayStr();
-  const add = (at, time, ids) => { const e = map[at] || (map[at] = {at, time, ids:[]}); ids.forEach(id => { if (!e.ids.includes(id)) e.ids.push(id); }); };
+  const add = (at, time, ids, labels) => { const e = map[at] || (map[at] = {at, time, ids:[], labels:[]});
+    ids.forEach(id => { if (!e.ids.includes(id)) e.ids.push(id); }); (labels||[]).forEach(l => e.labels.push(l)); };
   for (let k=0; k<days; k++){
     const date = addDays(today, k);
-    alarmsFor(shiftsOn(date)).forEach(a => { const at = atOf(date, a.time); if (at > from) add(at, a.time, a.ids); });
+    alarmsFor(idsOn(date)).forEach(a => { const at = atOf(date, a.time); if (at > from) add(at, a.time, a.ids); });
+    const wd = parseYmd(date).getDay();
+    (S.onceAlarms || []).filter(x => x.on && isWeekly(x) && x.days.includes(wd))
+      .forEach(x => { const at = atOf(date, x.t); if (at > from) add(at, x.t, [], [x.label || '알람']); });
   }
-  oneShots().forEach(o => { if (o.at > from) add(o.at, o.time, o.ids); });
+  oneShots().forEach(o => { if (o.at > from) add(o.at, o.time, o.ids, o.labels); });
   return Object.values(map).sort((a,b) => a.at - b.at);
 }
 function upcoming(limit=5){
   const now = Date.now();
-  return alarmEntries(10).filter(e => e.at > now).slice(0, limit).map(e => ({date: ymd(new Date(e.at)), time:e.time, ids:e.ids}));
+  return alarmEntries(10).filter(e => e.at > now).slice(0, limit).map(e => ({date: ymd(new Date(e.at)), time:e.time, ids:e.ids, labels:e.labels||[]}));
 }
+/* 알람 이름들: 그룹 이름 + 일회성 알람 이름 */
+function entryNames(e){ return [...(e.ids||[]).filter(id => S.types[id]).map(id => S.types[id].name), ...(e.labels||[])]; }
 function untilText(date, time){
   const [h,m] = time.split(':').map(Number); const d = parseYmd(date); d.setHours(h, m, 0, 0);
   let mins = Math.round((d - new Date())/60000); if (mins < 1) return '곧';
@@ -297,16 +471,23 @@ function untilText(date, time){
 function dayWord(date){ const k = diffDays(todayStr(), date); return k===0?'오늘':k===1?'내일':k===2?'모레':fmtDate(date); }
 
 /* ===================== 타입 / 그룹 ===================== */
+/* 캘린더에 등록된 근무 목록 (알람 탭에서 만든 '알람 전용 그룹'은 제외) */
+function shiftOrder(){ return typeOrder().filter(id => S.types[id] && !S.types[id].alarmOnly); }
+function isAlarmOnly(id){ return !!(S.types[id] && S.types[id].alarmOnly); }
 function typeOrder(){
   const seen = []; S.pattern.forEach(id => { if (!seen.includes(id)) seen.push(id); });
   Object.keys(S.types).forEach(id => { if (!seen.includes(id)) seen.push(id); });
   const ord = (S.order || []).filter(id => S.types[id]);
   return [...ord, ...seen.filter(id => !ord.includes(id))];
 }
+function groupOrder(){
+  return typeOrder().filter(id => !(S.pattern.includes(id) && S.types[id].off && !(S.groups[id] && S.groups[id].times.length)));
+}
 function moveType(id, dir){
-  const list = typeOrder(), i = list.indexOf(id), j = i + dir;
-  if (i < 0 || j < 0 || j >= list.length) return;
-  [list[i], list[j]] = [list[j], list[i]];
+  const vis = groupOrder(), i = vis.indexOf(id), other = vis[i + dir];
+  if (i < 0 || !other) return;
+  const list = typeOrder(), a = list.indexOf(id), b = list.indexOf(other);
+  [list[a], list[b]] = [list[b], list[a]];
   S.order = list; save();
 }
 function moveGroup(id, dir){
@@ -325,12 +506,25 @@ function chip(id, mini){
   const t = S.types[id]; if (!t) return '';
   return `<span class="chip ${mini?'mini':''}" style="background:${t.color}">${esc(mini ? t.short : t.name)}</span>`;
 }
-function addCustomType(name, color, mode){
+/* 새 근무(캘린더) 또는 알람 전용 그룹(alarmOnly) 만들기. 같은 이름이 있으면 그것을 씀 */
+function addCustomType(name, color, alarmOnly){
   name = name.trim(); if (!name) return null;
-  const exist = Object.entries(S.types).find(([,t]) => t.name === name); if (exist) return exist[0];
-  const id = 'c' + Date.now().toString(36);
+  const exist = Object.entries(S.types).find(([,t]) => t.name === name);
+  if (exist){
+    const [id, t] = exist;
+    if (!alarmOnly && t.alarmOnly){
+      // 알람 탭에서 만든 같은 이름의 그룹 → 캘린더 근무로 바꿈
+      t.alarmOnly = false; ensureGroup(id);
+      const g = S.groups[id]; if (g.mode !== 'repeat'){ g.mode = 'shift'; g.shifts = [...new Set([...(g.shifts||[]), id])]; }
+    }
+    return id;
+  }
+  let id = 'c' + Date.now().toString(36);
+  while (S.types[id]) id += Math.floor(Math.random()*10);
   S.types[id] = {name, short:name[0], color: color || nextColor(), off:false};
-  ensureGroup(id); S.groups[id].mode = mode || 'calendar'; return id;
+  if (alarmOnly) S.types[id].alarmOnly = true;
+  ensureGroup(id); S.groups[id].mode = 'shift'; S.groups[id].shifts = alarmOnly ? [] : [id];
+  return id;
 }
 
 /* ===================== 화면 상태 ===================== */
@@ -340,13 +534,18 @@ const W = {step:1, text:'', pickType:null, pickIdx:null};
 let D = null; // 날짜 편집 모달 상태
 let flashGroup = null;
 let openGroup = null;
-let colorPickFor = null; // 알람 탭에서 펼쳐진 그룹
+let flashOpened = null, flashScrolled = false;
+let colorPickFor = null;
+let addingTime = null; // 시간 추가 중인 그룹
+let addingOnce = false; // 일회성 알람 추가 중
+let editGroup = null;   // 설정(이름·방식·소리)을 펼친 그룹 // 알람 탭에서 펼쳐진 그룹
 
 /* ===================== 렌더 ===================== */
 function render(){
   $('#tabs').classList.toggle('hidden', !S.setupDone);
   if (!S.setupDone) renderWizard(); else renderMain();
   updateLive();
+  if (DT) renderDetail();
 }
 
 /* ---------- 초기 설정 ---------- */
@@ -447,72 +646,131 @@ function calHTML(y, m, interactive){
     h += `<div class="cell ${d.getMonth()!==m?'other':''} ${ds===today?'today':''} ${S.overrides[ds]?'edited':''}" ${interactive?`data-a="day" data-d="${ds}"`:''}>
       <span class="dn ${wd===0?'sun':wd===6?'sat':''}">${d.getDate()}</span>
       <div class="chips">${shiftsOn(ds).map(id=>chip(id,true)).join('')}</div>
+      ${onceOn(ds).slice(0,2).map(x => `<div class="rule-mini once-mini">⏰${x.t.replace(/^0/,'')}</div>`).join('')}
+      ${ruleIdsOn(ds).filter(id => isRepeat(id) && S.groups[id].times.some(t=>t.on)).map(id => `<div class="rule-mini" style="color:${S.types[id].color}">⏰${esc(S.types[id].short)}</div>`).join('')}
       ${S.memos[ds] ? `<div class="memo-mini">${esc(S.memos[ds].split('\n')[0])}</div>` : ''}</div>`;
   }
-  h += `</div><div class="legend">${typeOrder().map(id=>`<span class="row small" style="gap:4px">${chip(id)}</span>`).join('')}
+  h += `</div><div class="legend">${shiftOrder().map(id=>`<span class="row small" style="gap:4px">${chip(id)}</span>`).join('')}
     ${interactive?'<span class="small muted" style="margin-left:auto">● 변경된 날</span>':''}</div>`;
   return h;
 }
 
 /* ---------- 알람 그룹 편집 ---------- */
 function groupsHTML(full){
-  const list = typeOrder();
+  const list = groupOrder();
   return list.map((id, idx) => {
     const t = S.types[id]; ensureGroup(id); const g = S.groups[id];
     const inPattern = S.pattern.includes(id);
-    const once = isOnce(id);
+    const once = isOnce(id), repeat = isRepeat(id), shiftMode = isShiftMode(id), alarmOnly = isAlarmOnly(id);
     const times = g.times.length ? g.times.map((x,i)=>`
       <div class="time-row ${x.on&&g.on?'':'off'}">
-        <input type="time" value="${x.t}" data-c="time" data-id="${id}" data-i="${i}">
+        ${tfHTML(x.t, `data-c="time" data-id="${id}" data-i="${i}" readonly`)}
+        <button class="edit-btn" data-a="dtOpen" data-k="g" data-id="${id}" data-i="${i}" aria-label="알람 수정">수정</button>
         ${once ? `<span class="small ${x.on&&g.on&&x.at?'':'muted'}" style="flex:none;${x.on&&g.on&&x.at?'color:var(--accent);font-weight:700':''}">${x.on&&g.on&&x.at ? dayWord(ymd(new Date(x.at)))+' 울림' : '꺼짐'}</span>` : ''}
         <label class="switch"><input type="checkbox" ${x.on?'checked':''} data-c="tOn" data-id="${id}" data-i="${i}"><span></span></label>
         <button class="del" data-a="tDel" data-id="${id}" data-i="${i}" aria-label="삭제">✕</button>
       </div>`).join('') : `<div class="empty">${t.off?'휴무일 — 알람 없음 (필요하면 추가)':'알람이 없습니다. 시간을 추가하세요.'}</div>`;
     const onCount = g.times.filter(x=>x.on).length;
-    const status = !g.on ? '<span class="badge off">꺼짐</span>'
-      : onCount ? `<span class="badge">${once?'한 번 · ':''}${onCount}개</span>` : `<span class="badge ${once?'off':'none'}">${once?'한 번 · 꺼짐':'알람 없음'}</span>`;
+    const status = onCount ? `<span class="badge ${g.on?'':'off'}">${onCount}개</span>` : `<span class="badge ${g.on?'none':'off'}">알람 없음</span>`;
     const arrows = `<button class="mv" data-a="mvUp" data-id="${id}" ${idx===0?'disabled':''} aria-label="위로">▲</button>
           <button class="mv" data-a="mvDown" data-id="${id}" ${idx===list.length-1?'disabled':''} aria-label="아래로">▼</button>`;
-    const headRow = `<div class="row" style="gap:6px">
-      <button class="g-row" data-a="gOpen" data-id="${id}">
+    const headRow = `<div class="row g-head ${g.on?'':'g-off'}" style="gap:6px">
+      <button class="g-row" data-a="gOpen" data-id="${id}" style="flex:0 1 auto;min-width:0">
         <span class="dot" style="background:${t.color};width:14px;height:14px"></span>
-        <span class="g-name">${esc(t.name)}</span>${status}
+        <span class="g-name">${esc(t.name)}</span></button>
+      <label class="switch sm" title="그룹 전체 켜기/끄기"><input type="checkbox" ${g.on?'checked':''} data-c="gOn" data-id="${id}" aria-label="${esc(t.name)} 알람 전체 켜기"><span></span></label>
+      <button class="g-row" data-a="gOpen" data-id="${id}" style="flex:1;justify-content:flex-end;gap:6px">${status}
         <span class="chev">${openGroup===id?'⌃':'›'}</span></button>
       ${arrows}</div>`;
-    // 알람 탭: 접힌 상태면 그룹명만 표시
+    // 알람 탭: 접힌 상태면 이름과 알람 개수만
     if (full && openGroup !== id){
       return `<div class="card group-card ${flashGroup===id?'flash':''}" id="g-${id}" style="padding:4px 14px">${headRow}</div>`;
     }
+    // 펼친 상태: 울리는 방식 한 줄 + 시간 목록. 시간 옆 '수정'을 누르면 상세 화면
+    const modeLine = `<button class="g-modeline" data-a="dtGroup" data-id="${id}">${full ? '' : `<span class="dot" style="background:${t.color}"></span><b>${esc(t.name)}</b>`}
+        <span class="g-mode">🔁 ${esc(modeText(id))}</span><span class="chev" style="margin-left:auto">›</span></button>`;
     return `<div class="card group-card ${flashGroup===id?'flash':''}" id="g-${id}" ${full?'style="padding:4px 14px 14px"':''}>
-      ${full ? headRow + '<div style="border-top:1px solid var(--line);margin:4px 0 10px"></div>' : ''}
-      <div class="group-head">
-        <button class="color-in" style="background:${t.color}" data-a="colorPick" data-id="${id}" aria-label="색 바꾸기"></button>
-        <input class="name-in" value="${esc(t.name)}" data-c="tName" data-id="${id}" maxlength="10">
-        <span class="small muted">${full?'그룹 켜기':onCount+'개'}</span>
-        <label class="switch"><input type="checkbox" ${g.on?'checked':''} data-c="gOn" data-id="${id}"><span></span></label>
-      </div>
-      ${colorPickFor===id ? `<div class="swatches" style="margin:0 0 10px">${PALETTE.map(c=>`<button class="${c===t.color?'on':''}" style="background:${c}" data-a="colorSet" data-id="${id}" data-c="${c}"></button>`).join('')}</div>` : ''}
-      ${!inPattern ? `<div style="padding:8px 0;border-top:1px solid var(--line)">
-        <div class="small muted" style="margin-bottom:6px">울리는 방식</div>
-        <div class="seg">
-          <button class="${once?'on':''}" data-a="gMode" data-id="${id}" data-m="once">한 번만<small>켜면 가장 가까운 그 시각</small></button>
-          <button class="${once?'':'on'}" data-a="gMode" data-id="${id}" data-m="calendar">캘린더에 넣은 날<small>근무처럼 날짜에 추가</small></button>
-        </div></div>` : ''}
-      <div class="row" style="padding:8px 0;border-top:1px solid var(--line)">
-        <span class="small muted" style="flex:none">알람 소리</span>
-        <select class="snd-sel" data-c="gSound" data-id="${id}">${soundOptions(g.sound||'', true)}</select>
-        <button class="small-btn" data-a="sndPlay" data-s="${soundOf([id])}">▶</button>
-      </div>
+      ${full ? headRow + '<div style="border-top:1px solid var(--line);margin:4px 0 8px"></div>' : ''}
+      ${modeLine}
       ${times}
+      ${addingTime===id ? `<div class="time-row add-row">
+        ${tfHTML('', 'id="newTime"', '5:30')}
+        <button class="small-btn" data-a="tAddOk" data-id="${id}" style="padding:9px 14px">추가</button>
+        <button class="del" data-a="tAddCancel" aria-label="취소">✕</button></div>` : ''}
       <div class="row between" style="margin-top:8px">
-        <button class="small-btn" data-a="tAdd" data-id="${id}">+ 알람 시간 추가</button>
+        ${addingTime===id ? '<span></span>' : `<button class="small-btn" data-a="tAdd" data-id="${id}">+ 알람 시간 추가</button>`}
         <div class="row" style="gap:6px">
-          ${full && !inPattern ? `<button class="link" style="color:var(--danger);margin-right:4px" data-a="typeDel" data-id="${id}">그룹 삭제</button>` : ''}
+          ${g.times.length || isAlarmOnly(id) ? `<button class="link" style="color:var(--danger)" data-a="gDelAll" data-id="${id}">그룹 전체 삭제</button>` : ''}
           ${full ? '' : arrows}
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+/* 일회성 알람 목록 */
+function onceHTML(){
+  const list = S.onceAlarms || [];
+  const rows = list.map((x, i) => `<div class="time-row ${x.on?'':'off'}">
+      ${tfHTML(x.t, `data-c="oTime" data-i="${i}" readonly`)}
+      <button class="edit-btn" data-a="dtOpen" data-k="o" data-i="${i}" aria-label="알람 수정">수정</button>
+      <div class="o-meta"><span class="o-label">${esc(x.label||'') || '<span class="muted">이름 없음</span>'}</span>
+        <span class="small ${x.on&&(x.at||isWeekly(x))?'':'muted'}" style="${x.on&&(x.at||isWeekly(x))?'color:var(--accent);font-weight:700':''}">${onceWhen(x)}</span></div>
+      <label class="switch"><input type="checkbox" ${x.on?'checked':''} data-c="oOn" data-i="${i}"><span></span></label>
+      <button class="del" data-a="oDel" data-i="${i}" aria-label="삭제">✕</button></div>`).join('');
+  return `<div class="sec-h"><h3>일회성 알람</h3><p class="small muted">한 번만 울리고 저절로 꺼져요. 기본 시계 앱 알람처럼 쓰면 돼요.</p></div>
+    <div class="card" style="padding:8px 16px 14px">
+      ${rows || (addingOnce ? '' : '<div class="empty" style="padding:10px 0 4px">아직 없어요.</div>')}
+      ${addingOnce ? `<div class="time-row add-row">
+        ${tfHTML('', 'id="newOnce"', '7:00')}
+        <input class="o-label" id="newOnceLabel" placeholder="이름 (선택)" maxlength="12" style="flex:1;min-width:0">
+        <button class="small-btn" data-a="oAddOk" style="padding:9px 14px">추가</button>
+        <button class="del" data-a="oAddCancel" aria-label="취소">✕</button></div>`
+        : `<button class="small-btn" data-a="oAdd" style="margin-top:8px">+ 일회성 알람 추가</button>`}
+    </div>`;
+}
+
+/* '특정 근무마다': 캘린더에 등록된 근무 중에서 고르기 */
+function shiftPickHTML(id){
+  const g = S.groups[id], sel = g.shifts || [];
+  const next = sel.length ? nextRuleDays(id, 6) : [];
+  return `<div class="rules">
+    <div class="small muted">어떤 근무가 있는 날 울릴까요? (여러 개 선택 가능)</div>
+    <div class="sel-grid" style="margin:2px 0 0">${shiftOrder().map(x => { const t = S.types[x], on = sel.includes(x);
+      return `<button class="${on?'on':''}" style="${on?`background:${t.color};border-color:${t.color}`:''}" data-a="gShift" data-id="${id}" data-s="${x}">
+        ${on?'✓':`<span class="dot" style="background:${t.color}"></span>`} ${esc(t.name)}</button>`; }).join('')}</div>
+    <div class="small" style="color:var(--muted)">${!sel.length ? '근무를 하나 이상 골라 주세요.' : next.length ? '다음에 울릴 날: <b style="color:var(--ink)">' + next.map(d => { const x = parseYmd(d); return `${x.getMonth()+1}/${x.getDate()}(${WD[x.getDay()]})`; }).join(', ') + '</b>' : '앞으로 90일 동안 해당하는 날이 없어요.'}</div>
+  </div>`;
+}
+
+/* 반복 규칙 편집 */
+function rulesHTML(id){
+  const g = S.groups[id], rules = g.rules || [];
+  const types = shiftOrder().filter(x => x !== id);
+  const opts = (sel, any) => (any ? `<option value="" ${!sel?'selected':''}>근무 상관없이</option>` : '')
+    + types.map(x => `<option value="${x}" ${x===sel?'selected':''}>${esc(S.types[x].name)}</option>`).join('');
+  const rows = rules.map((r, i) => {
+    let body = '';
+    if (r.kind === 'after') body = `
+      <div class="rule-line"><select class="snd-sel" data-c="rPrev" data-id="${id}" data-r="${i}">${opts(r.prev)}</select><span>다음에 오는</span>
+        <select class="snd-sel" data-c="rTarget" data-id="${id}" data-r="${i}">${opts(r.target)}</select><span>중</span></div>
+      <div class="pills">${[1,2,3,4].map(n => `<button class="${(r.nth||[]).includes(n)?'on':''}" data-a="rNth" data-id="${id}" data-r="${i}" data-n="${n}">${NTH[n-1]} 날</button>`).join('')}</div>`;
+    else if (r.kind === 'weekday') body = `
+      <div class="pills">${[1,2,3,4,5,6,0].map(d => `<button class="${(r.days||[]).includes(d)?'on':''} ${d===0?'sun':d===6?'sat':''}" data-a="rDay" data-id="${id}" data-r="${i}" data-d="${d}">${WD[d]}</button>`).join('')}</div>
+      <div class="rule-line"><span>근무 조건</span><select class="snd-sel" data-c="rShift" data-id="${id}" data-r="${i}">${opts(r.shift, true)}</select></div>`;
+    else body = `<div class="rule-line"><select class="snd-sel" data-c="rTarget" data-id="${id}" data-r="${i}">${opts(r.target)}</select><span>인 날마다</span></div>`;
+    return `<div class="rule"><div class="row between"><b class="small">${esc(ruleText(r))}</b>
+      <button class="del" data-a="rDel" data-id="${id}" data-r="${i}" aria-label="규칙 삭제">✕</button></div>${body}</div>`;
+  }).join('');
+  const next = nextRuleDays(id, 6);
+  return `<div class="rules">
+    ${rows || '<div class="empty">규칙이 없어요. 아래에서 추가하세요.</div>'}
+    <div class="row wrap" style="gap:6px;margin-top:8px">
+      <button class="small-btn" data-a="rAdd" data-id="${id}" data-k="after">+ 근무 순서</button>
+      <button class="small-btn" data-a="rAdd" data-id="${id}" data-k="weekday">+ 요일</button>
+    </div>
+    <div class="small" style="margin-top:10px;color:var(--muted)">${rules.length ? (next.length ? '다음에 울릴 날: <b style="color:var(--ink)">' + next.map(d => { const x = parseYmd(d); return `${x.getMonth()+1}/${x.getDate()}(${WD[x.getDay()]})`; }).join(', ') + '</b>' : '앞으로 90일 동안 해당하는 날이 없어요.') : ''}</div>
+  </div>`;
 }
 
 /* ---------- 메인 ---------- */
@@ -547,6 +805,7 @@ function renderMain(){
     const t = todayStr(), sh = shiftsOn(t);
     const notif = !NATIVE && ('Notification' in window) && Notification.permission !== 'granted';
     v.innerHTML = `
+      ${updateBanner()}
       ${permBanner()}
       ${!S.enabled ? `<div class="banner">전체 알람이 꺼져 있어요. 설정에서 켤 수 있습니다.</div>` : ''}
       <div class="card today-card">
@@ -563,21 +822,26 @@ function renderMain(){
       ${notif ? `<div class="banner">이 앱(브라우저 탭)이 열려 있어야 알람이 울립니다.</div>` : ''}`;
   }
   else if (tab === 'alarm'){
-    if (flashGroup) openGroup = flashGroup; // 새로 만들었거나 설정이 필요한 그룹은 펼쳐서 보여줌
+    if (flashGroup && flashOpened !== flashGroup){ openGroup = flashGroup; flashOpened = flashGroup; } // 새로 만들었거나 설정이 필요한 그룹은 한 번 펼쳐서 보여줌
     if (openGroup && !S.types[openGroup]) openGroup = null;
-    v.innerHTML = `<div class="card" style="padding:14px 18px"><p class="small muted" style="margin:0">
-        근무 알람 그룹은 캘린더의 근무에 맞춰 울려요. 새로 만든 그룹은 '한 번만'(가장 가까운 그 시각에 한 번) 또는 '캘린더에 넣은 날' 중에서 고를 수 있어요. 그룹을 누르면 자세히 볼 수 있어요.</p></div>
+    v.innerHTML = `${onceHTML()}
+      <div class="sec-h"><h3>알람 그룹</h3><p class="small muted">근무에 맞춰 반복해서 울려요. 그룹을 누르면 시간을 정할 수 있어요.</p></div>
       ${groupsHTML(true)}
       <div class="card"><h3>새 알람 그룹 추가</h3>
-        <div class="row"><input class="text-input" id="newTypeName" placeholder="예: 지원, 교육, 당직" maxlength="10">
+        <div class="row"><input class="text-input" id="newTypeName" placeholder="예: 지원, 교육, 운동" maxlength="10">
         <button class="small-btn" data-a="newTypeTab" style="padding:11px 14px">추가</button></div></div>`;
-    if (flashGroup){ const el = $('#g-'+flashGroup); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(()=>flashGroup=null, 1700); }
+    if (addingOnce) setTimeout(() => { const i = $('#newOnce'); if (i) i.focus(); }, 60);
+    if (flashGroup && !flashScrolled){ flashScrolled = true; const el = $('#g-'+flashGroup); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(()=>{ flashGroup = null; flashOpened = null; flashScrolled = false; }, 1700); }
   }
   else {
     const ovs = Object.keys(S.overrides).sort();
     const perm = ('Notification' in window) ? Notification.permission : 'unsupported';
     v.innerHTML = `
       <div class="card">
+        ${NATIVE && NATIVE.update ? `<div class="list-row"><div><b>앱 버전 ${esc(curVersion())}</b><div class="small muted">${hasUpdate() ? '새 버전 ' + esc(S.update.ver) + '이(가) 있어요' : '새 버전이 나오면 캘린더 화면에 알려 드려요'}</div></div>
+          ${hasUpdate() ? '<button class="small-btn" data-a="doUpdate">업데이트</button>' : '<button class="small-btn" data-a="checkUpd">업데이트 확인</button>'}</div>` : ''}
+        ${STATS_URL ? `<div class="list-row"><div><b>익명 사용 통계 보내기</b><div class="small muted">앱을 더 좋게 만들기 위해 근무 패턴과 기능 사용 횟수만 하루 한 번 보내요. 이름·메모 내용·위치는 보내지 않아요.</div></div>
+          <label class="switch"><input type="checkbox" data-c="stats" ${S.statsOn!==false?'checked':''}><span></span></label></div>` : ''}
         <div class="list-row"><div><b>전체 알람</b><div class="small muted">끄면 모든 알람이 울리지 않아요</div></div>
           <label class="switch"><input type="checkbox" data-c="master" ${S.enabled?'checked':''}><span></span></label></div>
         <div class="list-row"><div style="flex:1"><b>기본 알람 소리</b><div class="small muted">그룹마다 따로 정하지 않으면 이 소리가 울려요</div>
@@ -611,8 +875,8 @@ function updateLive(){
   const up = S.setupDone ? upcoming(6) : [];
   if (nb){
     nb.innerHTML = up.length
-      ? `<div class="small muted">다음 알람</div><div style="font-size:18px;font-weight:800">${dayWord(up[0].date)} ${up[0].time}
-         <span style="font-size:14px;font-weight:600">· ${up[0].ids.map(id=>esc(S.types[id].name)).join('·')}</span></div>
+      ? `<div class="small muted">다음 알람</div><div style="font-size:18px;font-weight:800">${dayWord(up[0].date)} ${fmt12(up[0].time)}
+         <span style="font-size:14px;font-weight:600">· ${entryNames(up[0]).map(esc).join('·')}</span></div>
          <div class="small muted">${untilText(up[0].date, up[0].time)}</div>`
       : `<div class="small muted">예정된 알람이 없습니다</div>`;
   }
@@ -629,6 +893,29 @@ function updateLive(){
 /* ===================== 날짜 편집 모달 ===================== */
 function openDay(date){ D = {date, sel:[...shiftsOn(date)], newName:'', newColor:nextColor(), adding:false, activate:[], memo:S.memos[date]||''}; renderDay(); }
 /* 그룹이 꺼져 있거나 켜진 시간이 없으면 '활성화'가 필요 */
+/* 이 날에 근무를 추가. 이미 다른 근무가 있으면 일단 함께 넣고, 기존 근무를 남길지 물어봄 */
+/* '지원으로' / '주간으로' / '야간으로' — 받침에 맞는 조사 */
+function ro(word){
+  const c = word.charCodeAt(word.length-1) - 0xAC00;
+  if (c < 0 || c > 11171) return '(으)로';
+  const jong = c % 28;
+  return (jong === 0 || jong === 8) ? '로' : '으로';
+}
+function addShift(id){
+  if (D.sel.includes(id)) return;
+  const prev = D.sel.slice();
+  D.sel.push(id);
+  D.keepAsk = prev.length ? {id, prev, replace: true} : null;   // 기본: 기존 근무 지우고 바꾸기
+}
+/* 저장 직전: '바꾸기'를 골라 둔 상태면 기존 근무를 빼기 */
+function applyKeepChoice(){
+  const k = D.keepAsk;
+  if (k && k.replace && D.sel.includes(k.id)){
+    D.sel = D.sel.filter(x => !k.prev.includes(x));
+    D.activate = D.activate.filter(x => D.sel.includes(x));
+  }
+  D.keepAsk = null;
+}
 function needsActivate(id){ const g = S.groups[id]; return !!g && g.times.length > 0 && (!g.on || !g.times.some(t=>t.on)); }
 function activateGroup(id){ const g = S.groups[id]; if (!g) return; g.on = true; if (!g.times.some(t=>t.on)) g.times.forEach(t=>t.on=true); }
 function groupSummary(id){
@@ -638,16 +925,74 @@ function groupSummary(id){
 }
 function previewAlarms(){
   const saved = {}; D.activate.forEach(id => { saved[id] = JSON.stringify(S.groups[id]); activateGroup(id); });
-  const r = alarmsFor(D.sel);
+  const k = D.keepAsk, sel = k && k.replace && D.sel.includes(k.id) ? D.sel.filter(x => !k.prev.includes(x)) : D.sel;
+  const r = alarmsFor([...new Set([...sel, ...ruleIdsOn(D.date)])]);
+  onceOn(D.date).forEach(x => { if (!r.some(a => a.time === x.t)) r.push({time: x.t, ids: []}); });
+  r.sort((a, b) => a.time.localeCompare(b.time));
   Object.keys(saved).forEach(id => { S.groups[id] = JSON.parse(saved[id]); });
   return r;
 }
-function closeModal(){ D = null; $('#modal').classList.add('hidden'); $('#modal').innerHTML=''; }
+/* ===================== 알람 상세 화면 (수정) ===================== */
+let DT = null; // {k:'g', id, i} 그룹 알람(i = -1 이면 그룹 설정만) | {k:'o', i} 일회성 알람
+function openDetail(dt){
+  DT = Object.assign({}, dt);
+  if (DT.k === 'g' && DT.i >= 0) DT.t = S.groups[DT.id].times[DT.i].t;
+  if (DT.k === 'o'){ const x = S.onceAlarms[DT.i]; DT.t = x.t; DT.label = x.label || ''; DT.days = (x.days || []).slice(); DT.date = x.date || null; }
+  if (DT.k === 'g') DT.name = S.types[DT.id].name;
+  renderDetail();
+}
+function renderDetail(){
+  if (!DT) return;
+  // 다시 그리기 전에 입력 중인 값 보관
+  const ti = $('#dtTime'); if (ti){ const v = tfValue(ti); if (v) DT.t = v; }
+  const ni = $('#dtName'); if (ni) DT.name = ni.value;
+  const li = $('#dtLabel'); if (li) DT.label = li.value;
+  let body = '', title = '', del = '';
+  if (DT.k === 'o'){
+    title = '일회성 알람';
+    body = `<div class="dt-time">${tfHTML(DT.t, 'id="dtTime"')}</div>
+      <label class="dt-lab">이름</label><input class="text-input" id="dtLabel" value="${esc(DT.label)}" placeholder="예: 병원" maxlength="12">
+      <label class="dt-lab">요일 반복</label>
+      <div class="pills">${[1,2,3,4,5,6,0].map(d => `<button class="${DT.days.includes(d)?'on':''} ${d===0?'sun':d===6?'sat':''}" data-a="dtDay" data-d="${d}">${WD[d]}</button>`).join('')}</div>
+      <p class="small muted" style="margin:10px 0 0">${DT.days.length ? '고른 요일마다 울려요.'
+        : DT.date ? `${fmtDate(DT.date)}에 한 번 울리고 저절로 꺼져요. 요일을 고르면 매주 반복돼요.`
+        : '가장 가까운 그 시각에 한 번 울리고 저절로 꺼져요. 요일을 고르면 매주 반복돼요.'}</p>`;
+    del = `<button class="ghost red-txt" data-a="dtDel">알람 삭제</button>`;
+  } else {
+    const id = DT.id, t = S.types[id], g = S.groups[id], inPattern = !isAlarmOnly(id); // 캘린더 근무는 주간·야간과 똑같이
+    const repeat = isRepeat(id), shiftMode = isShiftMode(id);
+    title = DT.i >= 0 ? `${t.name} 알람` : `${t.name} 설정`;
+    body = `${DT.i >= 0 ? `<div class="dt-time">${tfHTML(DT.t, 'id="dtTime"')}</div>` : ''}
+      ${!inPattern ? `<label class="dt-lab">그룹 이름</label>
+        <div class="row"><input class="text-input" id="dtName" value="${esc(DT.name)}" maxlength="10">
+        <button class="color-in" style="background:${t.color}" data-a="colorPick" data-id="${id}" aria-label="색 바꾸기"></button></div>
+        ${colorPickFor===id ? `<div class="swatches">${PALETTE.map(c=>`<button class="${c===t.color?'on':''}" style="background:${c}" data-a="colorSet" data-id="${id}" data-c="${c}"></button>`).join('')}</div>` : ''}` : ''}
+      <label class="dt-lab">울리는 방식</label>
+      ${inPattern ? `<div class="g-mode" style="font-size:15px">🔁 ${esc(modeText(id))}</div>` : `
+        <div class="seg">
+          <button class="${shiftMode?'on':''}" data-a="gMode" data-id="${id}" data-m="shift">특정 근무마다<small>고른 근무가 있는 날</small></button>
+          <button class="${repeat?'on':''}" data-a="gMode" data-id="${id}" data-m="repeat">직접 정한 규칙<small>근무 순서·요일로 반복</small></button>
+        </div>
+        ${shiftMode ? shiftPickHTML(id) : ''}${repeat ? rulesHTML(id) : ''}`}
+      <label class="dt-lab">알람 소리</label>
+      <div class="row"><select class="snd-sel" data-c="gSound" data-id="${id}">${soundOptions(g.sound||'', true)}</select>
+        <button class="small-btn" data-a="sndPlay" data-s="${soundOf([id])}">▶</button></div>
+      <p class="small muted" style="margin:10px 0 0">울리는 방식과 소리는 '${esc(t.name)}' 그룹의 모든 알람에 똑같이 적용돼요.</p>
+`;
+    del = DT.i >= 0 ? `<button class="ghost red-txt" data-a="dtDel">이 알람 삭제</button>` : '';
+  }
+  $('#modal').classList.remove('hidden');
+  $('#modal').innerHTML = `<div class="sheet detail">
+    <div class="row between"><h2 style="margin:0">${esc(title)}</h2><button class="del" data-a="dtClose" style="font-size:22px">✕</button></div>
+    ${body}
+    <div class="btns" style="margin-top:18px">${del}<button class="primary" data-a="dtSave">저장</button></div></div>`;
+}
+function closeModal(){ D = null; DT = null; $('#modal').classList.add('hidden'); $('#modal').innerHTML=''; }
 function renderDay(){
   const base = baseShift(D.date);
   const preview = previewAlarms();
   const noTime = D.sel.filter(id => !S.types[id].off && !D.activate.includes(id) && (!S.groups[id] || !S.groups[id].on || !S.groups[id].times.some(t=>t.on)));
-  const candidates = typeOrder().filter(id => !D.sel.includes(id));
+  const candidates = shiftOrder().filter(id => !D.sel.includes(id));
   let addPanel = '';
   if (D.adding === 'ask'){
     addPanel = `<div class="card" style="background:#f8fafc;padding:14px">
@@ -670,36 +1015,93 @@ function renderDay(){
           <div class="row" style="gap:8px;min-width:0">${chip(id)}<span class="small muted">${groupSummary(id)}</span></div>${st}</button>`;
       }).join('')}</div>`;
   } else if (D.adding === 'new'){
+    const prevNames = D.sel.filter(x => S.types[x]).map(x => S.types[x].name);
     addPanel = `<div class="card" style="background:#f8fafc;padding:14px">
-      <div class="row between" style="margin-bottom:8px"><h3 style="margin:0">새 알람 그룹 만들기</h3><button class="link" data-a="mAddMode" data-m="ask">‹ 뒤로</button></div>
-      <div class="row"><input class="text-input" id="mNewName" placeholder="예: 지원" value="${esc(D.newName)}" maxlength="10">
-      <button class="small-btn" data-a="mAddType" style="padding:11px 14px">추가</button></div>
+      <div class="row between" style="margin-bottom:8px"><h3 style="margin:0">새 근무 만들기</h3><button class="link" data-a="mAddClose">취소</button></div>
+      <input class="text-input" id="mNewName" placeholder="근무 이름 (예: 지원)" value="${esc(D.newName)}" maxlength="10">
       <div class="swatches">${PALETTE.map(c=>`<button class="${c===D.newColor?'on':''}" style="background:${c}" data-a="mColor" data-c="${c}"></button>`).join('')}</div>
-      <p class="small muted" style="margin:0">같은 이름의 근무와 알람 그룹이 함께 만들어지고, 저장 후 알람 시간을 설정할 수 있어요.</p></div>`;
+      ${prevNames.length ? `<div class="small muted" style="margin:4px 0 6px">이 날의 기존 근무(<b style="color:var(--ink)">${prevNames.map(esc).join(', ')}</b>)는</div>
+        <div class="seg" style="margin-bottom:10px">
+          <button class="${D.newReplace!==false?'on':''}" data-a="mNewKeep" data-v="replace">지우고 바꾸기<small>새 근무만 남김</small></button>
+          <button class="${D.newReplace===false?'on':''}" data-a="mNewKeep" data-v="keep">함께 두기<small>${prevNames.map(esc).join(' + ')} + 새 근무</small></button>
+        </div>` : ''}
+      <button class="primary" data-a="mAddType" style="padding:12px;font-size:15px">추가하고 저장</button>
+      <p class="small muted" style="margin:8px 0 0">같은 이름의 알람 그룹도 함께 만들어져요. 저장 후 알람 시간을 정할 수 있어요.</p></div>`;
   }
   $('#modal').classList.remove('hidden');
   $('#modal').innerHTML = `<div class="sheet">
     <div class="row between"><h2 style="margin:0">${fmtDate(D.date)}</h2><button class="del" data-a="mClose" style="font-size:22px">✕</button></div>
     <p class="small muted" style="margin:4px 0 12px">기본 근무: ${base ? chip(base) : '없음'}</p>
-    <h3>이 날의 근무 <span class="small muted" style="font-weight:400">(여러 개 선택 가능)</span></h3>
-    <div class="sel-grid">${typeOrder().map(id=>{
+    ${D.adding === 'new' ? '' : `<h3>이 날의 근무 <span class="small muted" style="font-weight:400">(여러 개 선택 가능)</span></h3>
+    <div class="sel-grid">${shiftOrder().map(id=>{
       const t=S.types[id], on=D.sel.includes(id);
       return `<button class="${on?'on':''}" style="${on?`background:${t.color};border-color:${t.color}`:''}" data-a="mToggle" data-id="${id}">
         ${on?'✓':`<span class="dot" style="background:${t.color}"></span>`} ${esc(t.name)}</button>`;}).join('')}
       <button data-a="mAddOpen" style="border-style:dashed;color:var(--muted)">+ 새 근무</button>
     </div>
+    ${customShifts().length ? `<button class="link small" data-a="mManage" style="padding:0 0 6px">${D.manage ? '근무 관리 닫기' : '✎ 추가한 근무 수정·삭제'}</button>` : ''}
+    ${D.manage ? manageHTML() : ''}`}
+    ${D.keepAsk && D.sel.includes(D.keepAsk.id) ? `<div class="card keep-ask">
+      <div style="font-weight:700;margin-bottom:4px">기존 근무를 어떻게 할까요?</div>
+      <div class="small muted" style="margin-bottom:10px">${D.keepAsk.prev.filter(x=>S.types[x]).map(x=>`<b style="color:var(--ink)">${esc(S.types[x].name)}</b>`).join(', ')} 일정이 이미 있어요.</div>
+      <div class="seg">
+        <button class="${D.keepAsk.replace?'on':''}" data-a="mReplace">${D.keepAsk.replace?'✓ ':''}${esc(S.types[D.keepAsk.id].name)}${ro(S.types[D.keepAsk.id].name)} 바꾸기<small>기존 근무는 삭제</small></button>
+        <button class="${D.keepAsk.replace?'':'on'}" data-a="mKeep">${D.keepAsk.replace?'':'✓ '}함께 두기<small>${D.keepAsk.prev.filter(x=>S.types[x]).map(x=>esc(S.types[x].name)).join(' + ')} + ${esc(S.types[D.keepAsk.id].name)}</small></button>
+      </div>
+      <div class="small muted" style="margin-top:8px">고른 대로 '저장'을 누르면 적용돼요.</div></div>` : ''}
     ${addPanel}
     ${D.activate.filter(id=>D.sel.includes(id)).map(id=>`<div class="warn" style="background:#eff6ff;color:#1e40af">✓ 저장하면 <b>${esc(S.types[id].name)}</b> 알람 그룹이 켜집니다.</div>`).join('')}
-    <h3 style="margin-top:14px">메모</h3>
-    <textarea id="mMemo" class="text-input memo-in" rows="3" maxlength="500" placeholder="예: 교육 09시, 회식, 근무 교대 요청 등">${esc(D.memo)}</textarea>
+    ${D.adding === 'new' ? '' : `
     <h3 style="margin-top:14px">이 날 울릴 알람</h3>
-    <div>${preview.length ? `<div class="row wrap" style="gap:6px">${preview.map(a=>`<span class="chip" style="background:${S.types[a.ids[0]].color}">${a.time}</span>`).join('')}</div>`
+    <div>${preview.length ? `<div class="row wrap" style="gap:6px">${preview.map(a=>`<span class="chip" style="background:${a.ids[0] && S.types[a.ids[0]] ? S.types[a.ids[0]].color : '#64748b'}">${fmt12(a.time)}</span>`).join('')}</div>`
        : '<div class="empty">울릴 알람이 없습니다.</div>'}</div>
     ${noTime.map(id=>`<div class="warn">⚠ <b>${esc(S.types[id].name)}</b> 알람 그룹에 켜진 시간이 없어요. 저장하면 알람 탭에서 바로 설정할 수 있어요.</div>`).join('')}
+    <h3 style="margin-top:14px">메모</h3>
+    <textarea id="mMemo" class="text-input memo-in" rows="3" maxlength="500" placeholder="예: 교육 09시, 회식, 근무 교대 요청 등">${esc(D.memo)}</textarea>
+    <h3 style="margin-top:14px">이 날 일회성 알람</h3>
+    ${onceOn(D.date).map(x => `<div class="time-row" style="padding:6px 0">
+        <b style="font-size:17px">${fmt12(x.t)}</b><span class="small muted" style="flex:1">${esc(x.label || '')}${isWeekly(x) ? ' · ' + onceWhen(x) : ''}</span>
+        ${isWeekly(x) ? '' : `<button class="del" data-a="mOnceDel" data-id="${x.id}" aria-label="삭제">✕</button>`}</div>`).join('')}
+    ${D.onceAdding ? `<div class="time-row add-row">
+        ${tfHTML('', 'id="dayOnce"', '7:00')}
+        <input class="o-label" id="dayOnceLabel" placeholder="이름 (선택)" maxlength="12" style="flex:1;min-width:0">
+        <button class="small-btn" data-a="mOnceAdd" style="padding:9px 12px">추가</button>
+        <button class="del" data-a="mOnceCancel" aria-label="취소">✕</button></div>`
+      : `<button class="small-btn" data-a="mOnceOpen" style="margin-top:4px">+ 이 날 일회성 알람 추가</button>`}
     <div class="btns" style="margin-top:16px">
       ${S.overrides[D.date] ? '<button class="ghost" data-a="mReset">기본값으로</button>' : ''}
       <button class="primary" data-a="mSave">저장</button>
-    </div></div>`;
+    </div>`}</div>`;
+}
+
+/* 캘린더에서 추가한 근무 (기본 근무 = 패턴에 있는 주간·야간·휴일 등은 제외) */
+function customShifts(){ return shiftOrder().filter(id => !S.pattern.includes(id)); }
+function manageHTML(){
+  return `<div class="card manage">${customShifts().map(id => {
+    const t = S.types[id];
+    if (D.editShift === id) return `<div class="m-row edit">
+        <input class="text-input" id="mEditName" value="${esc(D.editName ?? t.name)}" maxlength="10">
+        <div class="swatches" style="margin:6px 0">${PALETTE.map(c => `<button class="${c===(D.editColor||t.color)?'on':''}" style="background:${c}" data-a="mEditColor" data-c="${c}"></button>`).join('')}</div>
+        <div class="btns"><button class="ghost" data-a="mEditCancel" style="padding:9px">취소</button><button class="primary" data-a="mEditSave" data-id="${id}" style="padding:9px">저장</button></div></div>`;
+    if (D.delShift === id) return `<div class="m-row del-ask">
+        <div><b>'${esc(t.name)}' 근무를 삭제할까요?</b><div class="small muted">캘린더에 넣은 ${esc(t.name)} 일정과 ${esc(t.name)} 알람 그룹도 함께 지워져요.</div></div>
+        <div class="btns" style="margin-top:8px"><button class="ghost" data-a="mDelCancel" style="padding:9px">취소</button><button class="primary" data-a="mDelOk" data-id="${id}" style="padding:9px;background:var(--danger)">삭제</button></div></div>`;
+    return `<div class="m-row"><span class="dot" style="background:${t.color}"></span><b style="flex:1">${esc(t.name)}</b>
+        <button class="edit-btn" data-a="mEditShift" data-id="${id}">수정</button>
+        <button class="edit-btn red" data-a="mDelShift" data-id="${id}">삭제</button></div>`;
+  }).join('')}</div>`;
+}
+/* 근무(또는 알람 그룹)와 그 일정을 모두 지우기 */
+function deleteType(id){
+  delete S.types[id]; delete S.groups[id];
+  S.order = (S.order || []).filter(x => x !== id);
+  Object.values(S.groups).forEach(g => { if (g.shifts) g.shifts = g.shifts.filter(x => x !== id); });
+  Object.keys(S.overrides).forEach(d => {
+    if (!S.overrides[d].includes(id)) return;
+    S.overrides[d] = S.overrides[d].filter(x => x !== id);
+    // 그 근무만 있던 날은 원래 근무로 되돌림
+    if (!S.overrides[d].length || JSON.stringify(S.overrides[d]) === JSON.stringify([baseShift(d)].filter(Boolean))) delete S.overrides[d];
+  });
 }
 
 /* ===================== 확인 창 (브라우저 confirm 대신) ===================== */
@@ -755,20 +1157,21 @@ function soundOptions(sel, withDefault){
   return (withDefault ? `<option value="" ${!sel?'selected':''}>기본 소리 (${esc(SOUNDS[S.sound]?.name||'')})</option>` : '') +
     Object.entries(SOUNDS).filter(([,v]) => NATIVE || !v.nativeOnly).map(([k,v]) => `<option value="${k}" ${sel===k?'selected':''}>${v.name}</option>`).join('');
 }
-function startRing(time, ids, isTest){
+function startRing(time, ids, isTest, extra){
   stopRing(true); ensureAudio();
-  ringInfo = {time, ids};
-  const labels = ids.map(id => S.types[id] ? chip(id) : `<span class="chip" style="background:#64748b">${esc(id)}</span>`).join('');
+  extra = extra || [];
+  ringInfo = {time, ids, extra};
+  const labels = ids.map(id => S.types[id] ? chip(id) : '').join('') + extra.map(l => `<span class="chip" style="background:#64748b">${esc(l)}</span>`).join('');
   $('#ring').classList.remove('hidden');
   $('#ring').innerHTML = `<div class="small" style="opacity:.7">${isTest?'알람 테스트':fmtDate(todayStr())}</div>
-    <div class="rt">${time}</div><div class="labels">${labels}</div><div style="height:20px"></div>
+    <div class="rt">${fmt12(time) || time}</div><div class="labels">${labels}</div><div style="height:20px"></div>
     <button class="stop" data-a="ringStop">끄기</button><button class="snooze" data-a="ringSnooze">5분 후 다시 알림</button>`;
   const snd = SOUNDS[soundOf(ids)]; ringCount = 0;
   const go = () => { ringCount++; playSound(soundOf(ids)); try{ navigator.vibrate && navigator.vibrate([400,200,400]); }catch(e){} };
   go(); ringTimer = setInterval(go, snd.period);
   // 자동으로 멈추지 않음: 사용자가 '끄기' 또는 '5분 후 다시 알림'을 누를 때까지 계속 울림
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted'){
-    try{ new Notification('⏰ ' + time + ' 알람', {body: ids.map(id=>S.types[id]?.name || id).join(', ') + ' 근무', requireInteraction:true}); }catch(e){}
+    try{ new Notification('⏰ ' + time + ' 알람', {body: [...ids.map(id=>S.types[id]?.name || id), ...extra].join(', '), requireInteraction:true}); }catch(e){}
   }
 }
 function stopRing(silent){
@@ -789,8 +1192,9 @@ function tick(){
   S.snoozes = S.snoozes.filter(s => s.at > key);
   if (hits || snz.length){
     const ids = [...new Set([...(hits ? hits.ids : []), ...snz.flatMap(s => s.ids)])];
+    const extra = [...(hits ? hits.labels || [] : []), ...snz.flatMap(s => s.labels || [])];
     S.lastFired = key; save();
-    startRing(t, ids);
+    startRing(t, ids, false, extra);
   } else save();
 }
 setInterval(tick, 1000);
@@ -808,7 +1212,7 @@ const A = {
     if (chars.length > 60){ toast('패턴은 60일 이하로 입력하세요'); return; }
     [...new Set(chars)].forEach(c => {
       if (!S.types[c]) S.types[c] = {name: DEFAULT_NAMES[c] || c+'근무', short:c, color: DEFAULT_COLORS[c] || nextColor(), off: OFF_CHARS.includes(c)};
-      if (!S.groups[c]) S.groups[c] = {on:true, times:(DEFAULT_ALARMS[c]||[]).map(t=>({t, on:true}))};
+      if (!S.groups[c] && !S.types[c].off) S.groups[c] = {on:true, times:[]};   // 휴일·비번은 알람 그룹을 만들지 않음
     });
     S.pattern = chars; W.step = 2; W.pickType = null; W.pickIdx = null; save(); render();
   },
@@ -822,7 +1226,7 @@ const A = {
   w3next(){ W.step = 4; render(); },
   wBack(){ W.step--; render(); },
   async w4done(){
-    S.setupDone = true; save(); tab = 'cal'; render(); toast('설정 완료! 근무에 맞춰 알람이 울립니다');
+    S.setupDone = true; save(); tab = 'cal'; render(); toast('설정 완료! 근무에 맞춰 알람이 울립니다'); setTimeout(sendStats, 1500);
     if ('Notification' in window && Notification.permission === 'default'){ try{ await Notification.requestPermission(); }catch(e){} }
   },
   /* 캘린더 */
@@ -833,19 +1237,113 @@ const A = {
   tab(el){ tab = el.dataset.t; render(); window.scrollTo(0,0); },
   /* 알람 그룹 */
   tAdd(el){
-    const id = el.dataset.id; ensureGroup(id); const g = S.groups[id];
-    const last = g.times.length ? g.times[g.times.length-1].t : (S.types[id].off ? '08:00' : '06:00');
-    if (isOnce(id)) g.times.push({t: g.times.length ? addMin(last, 2) : addMin(hm(new Date()), 5), on:false});
-    else g.times.push({t: g.times.length ? addMin(last, 2) : last, on:true});
-    g.times.sort((a,b)=>a.t.localeCompare(b.t)); save(); render();
+    addingTime = el.dataset.id; render();
+    setTimeout(() => { const i = document.getElementById('newTime'); if (i){ i.focus(); } }, 60);
+  },
+  ap(el){
+    const w = el.closest('.tf'); if (!w) return;
+    w.querySelectorAll('[data-a=ap]').forEach(b => b.classList.toggle('on', b === el));
+    const input = w.querySelector('.tin');
+    if (input && input.dataset.c && input.value) input.dispatchEvent(new Event('change', {bubbles:true}));
+  },
+  tAddCancel(){ addingTime = null; render(); },
+  oAdd(){ addingOnce = true; render(); },
+  oAddCancel(){ addingOnce = false; render(); },
+  oAddOk(){
+    const v = tfValue($('#newOnce'));
+    if (!v){ toast('시각을 숫자로 입력해 주세요 (예: 700)'); return; }
+    const x = {id: 'o' + Date.now().toString(36), t: v, on: true, label: (($('#newOnceLabel') || {}).value || '').trim()};
+    arm(x); S.onceAlarms.push(x); S.onceAlarms.sort((a,b) => a.t.localeCompare(b.t));
+    addingOnce = false; save(); render(); toast(`${dayWord(ymd(new Date(x.at)))} ${fmt12(x.t)}에 울립니다`);
+  },
+  oDel(el){ S.onceAlarms.splice(+el.dataset.i, 1); save(); render(); },
+  tAddOk(el){
+    const id = el.dataset.id, v = tfValue($('#newTime'));
+    if (!v){ toast('시각을 숫자로 입력해 주세요 (예: 530)'); return; }
+    const g = S.groups[id], x = {t:v, on:true};
+    if (g.times.some(o => o.t === v)){ toast('이미 있는 시각이에요'); return; }
+    g.times.push(x); g.on = true;
+    if (isOnce(id)){ arm(x); toast(`${dayWord(ymd(new Date(x.at)))} ${fmt12(x.t)}에 울립니다`); }
+    g.times.sort((a,b)=>a.t.localeCompare(b.t));
+    addingTime = null; save(); render();
+  },
+
+  rAdd(el){ const g = S.groups[el.dataset.id]; (g.rules = g.rules || []).push(defaultRule(el.dataset.k)); save(); render(); },
+  rDel(el){ S.groups[el.dataset.id].rules.splice(+el.dataset.r, 1); save(); render(); },
+  rNth(el){ const r = S.groups[el.dataset.id].rules[+el.dataset.r], n = +el.dataset.n;
+    r.nth = (r.nth||[]).includes(n) ? r.nth.filter(x => x !== n) : [...(r.nth||[]), n].sort(); save(); render(); },
+  rDay(el){ const r = S.groups[el.dataset.id].rules[+el.dataset.r], d = +el.dataset.d;
+    r.days = (r.days||[]).includes(d) ? r.days.filter(x => x !== d) : [...(r.days||[]), d]; save(); render(); },
+  gShift(el){
+    const g = S.groups[el.dataset.id], x = el.dataset.s; g.shifts = g.shifts || [];
+    g.shifts = g.shifts.includes(x) ? g.shifts.filter(y => y !== x) : [...g.shifts, x];
+    save(); render();
   },
   gMode(el){
     const id = el.dataset.id, g = S.groups[id]; g.mode = el.dataset.m;
+    if (g.mode === 'shift' && !(g.shifts && g.shifts.length)) g.shifts = isAlarmOnly(id) ? [] : [id];
+    if (g.mode === 'repeat' && !(g.rules && g.rules.length)) g.rules = [defaultRule('after')];
     if (g.mode === 'once') g.times.forEach(arm); else g.times.forEach(x => delete x.at);
     save(); render();
   },
+  /* 시각 '수정': 숫자 칸을 열고 키보드 띄우기 */
+  tinEdit(el){
+    const inp = el.closest('.time-row').querySelector('.tin'); if (!inp) return;
+    inp.readOnly = false; inp.classList.add('editing'); inp.focus(); inp.select();
+  },
+  /* 그룹 전체 삭제: 알람 전용 그룹은 그룹째로, 근무(주간·야간·지원 등)는 알람만 모두 지움 (근무는 캘린더에 남음) */
+  gDelAll(el){
+    const id = el.dataset.id, nm = S.types[id].name, only = isAlarmOnly(id), n = S.groups[id].times.length;
+    DT = null;
+    askConfirm(only ? `'${esc(nm)}' 그룹을 삭제할까요?` : `'${esc(nm)}' 알람 ${n}개를 모두 삭제할까요?`,
+      only ? '그룹과 그 안의 알람이 모두 지워져요.' : `알람만 지워지고, 캘린더의 ${esc(nm)} 근무는 그대로 남아요.`, '삭제', () => {
+      if (only) deleteType(id); else { S.groups[id].times = []; }
+      if (openGroup === id && only) openGroup = null;
+      save(); render(); toast(only ? `'${nm}' 그룹을 삭제했어요` : `'${nm}' 알람을 모두 삭제했어요`);
+    }, true);
+  },
+  dtDay(el){ const d = +el.dataset.d; DT.days = DT.days.includes(d) ? DT.days.filter(x => x !== d) : [...DT.days, d]; renderDetail(); },
+  dtOpen(el){ openDetail({k: el.dataset.k, id: el.dataset.id, i: +el.dataset.i}); },
+  dtGroup(el){ openDetail({k:'g', id: el.dataset.id, i: -1}); },
+  dtClose(){ closeModal(); render(); },
+  dtSave(){
+    const ti = $('#dtTime');
+    if (DT.k === 'o'){
+      const x = S.onceAlarms[DT.i], v = tfValue(ti);
+      if (!v){ toast('시각을 숫자로 입력해 주세요 (예: 700)'); return; }
+      x.t = v; x.on = true; x.label = (($('#dtLabel') || {}).value || '').trim();
+      x.days = DT.days.slice(); if (x.days.length) delete x.date;
+      arm(x);
+      if (!isWeekly(x) && x.at < Date.now()){ toast('이미 지난 시각이에요'); return; }
+      S.onceAlarms.sort((a,b) => a.t.localeCompare(b.t));
+      closeModal(); save(); render(); toast(`${onceWhen(x).replace(' 울림','')} ${fmt12(x.t)}에 울립니다`); return;
+    }
+    const id = DT.id, g = S.groups[id];
+    if (DT.i >= 0){
+      const v = tfValue(ti);
+      if (!v){ toast('시각을 숫자로 입력해 주세요 (예: 530)'); return; }
+      const x = g.times[DT.i];
+      if (g.times.some((o, j) => j !== DT.i && o.t === v)){ toast('이미 있는 시각이에요'); return; }
+      x.t = v; x.on = true; g.on = true;
+      g.times.sort((a,b) => a.t.localeCompare(b.t));
+    }
+    const ni = $('#dtName');
+    if (ni){
+      const name = ni.value.trim();
+      if (!name){ toast('그룹 이름을 입력해 주세요'); return; }
+      if (Object.entries(S.types).some(([k, t]) => k !== id && t.name === name)){ toast('같은 이름이 이미 있어요'); return; }
+      S.types[id].name = name; S.types[id].short = name[0];
+    }
+    closeModal(); save(); render(); toast('저장했어요');
+  },
+  dtDel(){
+    if (DT.k === 'o') S.onceAlarms.splice(DT.i, 1);
+    else S.groups[DT.id].times.splice(DT.i, 1);
+    closeModal(); save(); render(); toast('알람을 삭제했어요');
+  },
+  gEdit(el){ const id = el.dataset.id; editGroup = editGroup === id ? null : id; colorPickFor = null; render(); },
   gOpen(el){
-    const id = el.dataset.id; openGroup = openGroup === id ? null : id; render();
+    const id = el.dataset.id; openGroup = openGroup === id ? null : id; if (editGroup !== openGroup) editGroup = null; render();
     const n = document.getElementById('g-'+id); if (n && openGroup) n.scrollIntoView({behavior:'smooth', block:'nearest'});
   },
   mvUp(el){ moveGroup(el.dataset.id, -1); },
@@ -853,49 +1351,100 @@ const A = {
   tDel(el){ S.groups[el.dataset.id].times.splice(+el.dataset.i, 1); save(); render(); },
   typeDel(el){
     const id = el.dataset.id, nm = S.types[id].name;
+    DT = null;
     askConfirm(`'${esc(nm)}' 알람 그룹을 삭제할까요?`, `캘린더에 추가된 '${esc(nm)}' 일정도 함께 지워집니다.`, '삭제', () => {
-      delete S.types[id]; delete S.groups[id];
-      Object.keys(S.overrides).forEach(d => {
-        S.overrides[d] = S.overrides[d].filter(x => x !== id);
-        if (JSON.stringify(S.overrides[d]) === JSON.stringify([baseShift(d)].filter(Boolean))) delete S.overrides[d];
-      });
+      deleteType(id);
       save(); render(); toast(`'${nm}' 삭제됨`);
     }, true);
   },
   newTypeTab(){
     const name = $('#newTypeName').value;
-    const id = addCustomType(name, null, 'once'); if (!id){ toast('이름을 입력하세요'); return; }
-    S.groups[id].times.length || S.groups[id].times.push({t: addMin(hm(new Date()), 5), on:false});
-    flashGroup = id; save(); render(); toast(`'${S.types[id].name}' 알람 그룹이 추가됐어요`);
+    const id = addCustomType(name, null, true); if (!id){ toast('이름을 입력하세요'); return; }
+    addingTime = id; // 방식을 고르고 나면 바로 시간 추가
+    flashGroup = id; openGroup = id; save(); render();
+    openDetail({k:'g', id, i:-1}); // 새 그룹은 울리는 방식(근무)부터 고르게
   },
   /* 모달 */
   mClose(){ closeModal(); },
   mToggle(el){
     const id = el.dataset.id;
-    if (D.sel.includes(id)){ D.sel = D.sel.filter(x=>x!==id); D.activate = D.activate.filter(x=>x!==id); }
-    else D.sel = [...D.sel, id];
+    if (D.sel.includes(id)){ D.sel = D.sel.filter(x=>x!==id); D.activate = D.activate.filter(x=>x!==id); D.keepAsk = null; }
+    else addShift(id);
     renderDay();
   },
-  mAddOpen(){ D.adding = D.adding ? false : 'ask'; renderDay(); },
+  mKeep(){ D.keepAsk.replace = false; renderDay(); },
+  mReplace(){ D.keepAsk.replace = true; renderDay(); },
+  mAddOpen(){
+    D.adding = 'new'; D.keepAsk = null; renderDay();
+    setTimeout(() => { const i = $('#mNewName'); if (i) i.focus(); }, 60);
+  },
+  mAddClose(){ D.adding = false; renderDay(); },
+  mOnceOpen(){ const m = $('#mMemo'); if (m) D.memo = m.value; D.onceAdding = true; renderDay(); setTimeout(() => { const i = $('#dayOnce'); if (i) i.focus(); }, 50); },
+  mOnceCancel(){ D.onceAdding = false; renderDay(); },
+  mOnceAdd(){
+    const v = tfValue($('#dayOnce'));
+    if (!v){ toast('시각을 숫자로 입력해 주세요 (예: 700)'); return; }
+    const x = {id: 'o' + Date.now().toString(36), t: v, on: true, label: (($('#dayOnceLabel') || {}).value || '').trim(), date: D.date};
+    arm(x);
+    if (x.at < Date.now()){ toast('이미 지난 시각이에요'); return; }
+    const m = $('#mMemo'); if (m) D.memo = m.value;
+    S.onceAlarms.push(x); S.onceAlarms.sort((a,b) => a.t.localeCompare(b.t));
+    D.onceAdding = false; save(); renderDay(); render(); toast(`${fmtDate(D.date)} ${fmt12(v)}에 울립니다`);
+  },
+  mOnceDel(el){ const m = $('#mMemo'); if (m) D.memo = m.value; S.onceAlarms = S.onceAlarms.filter(x => x.id !== el.dataset.id); save(); renderDay(); render(); },
+  mManage(){ D.manage = !D.manage; D.editShift = D.delShift = null; renderDay(); },
+  mEditShift(el){ D.editShift = el.dataset.id; D.delShift = null; D.editName = null; D.editColor = null; renderDay(); setTimeout(() => { const i = $('#mEditName'); if (i) i.focus(); }, 50); },
+  mEditColor(el){ D.editName = ($('#mEditName') || {}).value; D.editColor = el.dataset.c; renderDay(); },
+  mEditCancel(){ D.editShift = null; renderDay(); },
+  mEditSave(el){
+    const id = el.dataset.id, name = (($('#mEditName') || {}).value || '').trim();
+    if (!name){ toast('이름을 입력해 주세요'); return; }
+    if (Object.entries(S.types).some(([k, t]) => k !== id && t.name === name)){ toast('같은 이름의 근무가 이미 있어요'); return; }
+    S.types[id].name = name; S.types[id].short = name[0];
+    if (D.editColor) S.types[id].color = D.editColor;
+    D.editShift = null; save(); renderDay(); render(); toast('근무를 수정했어요');
+  },
+  mDelShift(el){ D.delShift = el.dataset.id; D.editShift = null; renderDay(); },
+  mDelCancel(){ D.delShift = null; renderDay(); },
+  mDelOk(el){
+    const id = el.dataset.id, nm = S.types[id].name;
+    deleteType(id);
+    D.sel = D.sel.filter(x => x !== id); D.activate = D.activate.filter(x => x !== id); D.delShift = null;
+    if (!customShifts().length) D.manage = false;
+    save(); renderDay(); render(); toast(`'${nm}' 근무를 삭제했어요`);
+  },
   mAddMode(el){
     D.adding = el.dataset.m; renderDay();
     if (D.adding === 'new') setTimeout(()=>$('#mNewName')?.focus(), 50);
   },
   mPickExisting(el){
     const id = el.dataset.id;
-    if (!D.sel.includes(id)) D.sel.push(id);
+    addShift(id);
     if (needsActivate(id) && !D.activate.includes(id)) D.activate.push(id);
     D.adding = false; renderDay();
   },
   mColor(el){ D.newName = $('#mNewName').value; D.newColor = el.dataset.c; renderDay(); },
+  mNewKeep(el){ D.newName = ($('#mNewName') || {}).value || D.newName; D.newReplace = el.dataset.v === 'replace'; renderDay(); },
+  /* 새 근무 이름이 적혀 있으면 만들어서 이 날에 넣음 (기존 근무는 고른 대로 지우거나 둠). 넣었으면 true */
+  mAddPending(){
+    if (D.adding !== 'new') return false;
+    const name = (($('#mNewName') || {}).value || D.newName || '').trim();
+    if (!name) return false;
+    const id = addCustomType(name, D.newColor);
+    if (!id) return false;
+    if (D.newReplace !== false){ D.sel = [id]; D.activate = D.activate.filter(x => x === id); }
+    else if (!D.sel.includes(id)) D.sel.push(id);
+    D.keepAsk = null; D.adding = false; D.newName = ''; D.newColor = nextColor();
+    return true;
+  },
   mAddType(){
-    const name = $('#mNewName').value; const id = addCustomType(name, D.newColor);
-    if (!id){ toast('근무 이름을 입력하세요'); return; }
-    if (!D.sel.includes(id)) D.sel.push(id);
-    D.adding = false; D.newName = ''; D.newColor = nextColor(); save(); renderDay();
+    if (!A.mAddPending()){ toast('근무 이름을 입력하세요'); return; }
+    A.mSave();
   },
   mReset(){ const memo = ($('#mMemo') ? $('#mMemo').value : D.memo).trim(); if (memo) S.memos[D.date] = memo; else delete S.memos[D.date]; delete S.overrides[D.date]; save(); closeModal(); render(); toast('기본 근무로 되돌렸어요'); },
   mSave(){
+    A.mAddPending();   // 새 근무 이름만 적고 저장을 눌러도 추가되게
+    applyKeepChoice(); // 기존 근무 지우기/함께 두기
     const date = D.date, base = [baseShift(date)].filter(Boolean);
     const sel = typeOrder().filter(id => D.sel.includes(id));
     if (JSON.stringify(sel) === JSON.stringify(base)) delete S.overrides[date]; else S.overrides[date] = sel;
@@ -905,20 +1454,22 @@ const A = {
     activated.forEach(activateGroup);
     const needs = sel.filter(id => !S.types[id].off && (!S.groups[id] || !S.groups[id].on || !S.groups[id].times.some(t=>t.on)));
     save(); closeModal();
-    if (needs.length){ flashGroup = needs[0]; tab = 'alarm'; render(); toast(`'${S.types[needs[0]].name}' 알람 시간을 설정해 주세요`); }
+    if (needs.length){ flashGroup = needs[0]; addingTime = needs[0]; tab = 'alarm'; render(); setTimeout(() => { const i = $('#newTime'); if (i) i.focus(); }, 500); toast(`'${S.types[needs[0]].name}' 알람 시간을 설정해 주세요`); }
     else { render(); toast(activated.length ? `저장했어요. ${activated.map(id=>S.types[id].name).join(', ')} 알람 그룹을 켰어요` : '저장했어요. 알람이 근무에 맞게 바뀌었어요'); }
   },
   /* 울림 */
   ringStop(){ stopRing(); },
   ringSnooze(){
     const n = new Date(); n.setMinutes(n.getMinutes()+5);
-    S.snoozes.push({at: ymd(n)+' '+hm(n), ids: ringInfo ? ringInfo.ids : []}); save(); stopRing(); toast(`${hm(n)}에 다시 울립니다`);
+    S.snoozes.push({at: ymd(n)+' '+hm(n), ids: ringInfo ? ringInfo.ids : [], labels: ringInfo ? ringInfo.extra || [] : []}); save(); stopRing(); toast(`${hm(n)}에 다시 울립니다`);
   },
   /* 설정 */
   async perm(){ try{ await Notification.requestPermission(); }catch(e){} render(); },
   sndPlay(el){ previewSound(el.dataset.s); },
   colorPick(el){ colorPickFor = colorPickFor === el.dataset.id ? null : el.dataset.id; render(); },
   colorSet(el){ S.types[el.dataset.id].color = el.dataset.c; colorPickFor = null; save(); render(); },
+  doUpdate(){ startUpdate(); },
+  async checkUpd(){ toast('새 버전을 확인하고 있어요'); const r = await checkUpdate(true); if (r === 'none') toast('지금 최신 버전이에요'); else if (r === 'fail') toast('확인하지 못했어요. 인터넷 연결을 확인해 주세요'); render(); },
   nPerm(el){ try{ NATIVE.openPerm(el.dataset.k); }catch(e){} },
   test(){
     const ids = typeOrder().filter(id=>!S.types[id].off).slice(0,1);
@@ -945,30 +1496,90 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM
 
 document.addEventListener('input', e => {
   if (e.target.id === 'mMemo' && D){ D.memo = e.target.value; return; }
+  if (e.target.id === 'mNewName' && D){ D.newName = e.target.value; return; }
   if (e.target.id === 'pat'){ W.text = e.target.value; $('#patPreview').innerHTML = patternPreview(W.text); }
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'pat') A.w1next();
   if (e.target.id === 'newTypeName') A.newTypeTab();
+  if (e.target.id === 'newOnce' || e.target.id === 'newOnceLabel'){ A.oAddOk(); return; }
+  if (e.target.id === 'dayOnce' || e.target.id === 'dayOnceLabel'){ A.mOnceAdd(); return; }
+  if (e.target.id === 'newTime'){ const b = document.querySelector('[data-a=tAddOk]'); if (b) A.tAddOk(b); }
+  if (e.target.classList && e.target.classList.contains('tin') && (e.target.dataset.c === 'time' || e.target.dataset.c === 'oTime')) e.target.blur();
   if (e.target.id === 'mNewName') A.mAddType();
+});
+/* ---------- 시각: 숫자 + 오전/오후 (저장은 24시간 'HH:MM') ---------- */
+function to12(t){ const [h, m] = t.split(':').map(Number); return {h: (h % 12) || 12, m, pm: h >= 12}; }
+function fmt12(t){ if (!t) return ''; const x = to12(t); return `${x.pm ? '오후' : '오전'} ${x.h}:${pad(x.m)}`; }
+/* 숫자 입력 칸 + 오전/오후 버튼 */
+function tfHTML(t, attrs, ph){
+  const x = t ? to12(t) : {h:'', m:0, pm:false};
+  return `<span class="tf"><input class="tin" type="text" inputmode="numeric" maxlength="5" value="${t ? x.h + ':' + pad(x.m) : ''}" ${ph ? `placeholder="${ph}"` : ''} ${attrs} aria-label="알람 시각">
+    <span class="ampm"><button type="button" class="${x.pm ? '' : 'on'}" data-a="ap" data-v="am">오전</button><button type="button" class="${x.pm ? 'on' : ''}" data-a="ap" data-v="pm">오후</button></span></span>`;
+}
+/* '530'+오전 → 05:30, '530'+오후 → 17:30, '1200'+오전 → 00:00, '17'(13~23시는 그대로) → 17:00. 잘못되면 '' */
+function parse12(v, pm){
+  const d = String(v || '').replace(/\D/g, '');
+  if (!d) return '';
+  let h, m;
+  if (d.length <= 2){ h = +d; m = 0; }
+  else if (d.length === 3){ h = +d.slice(0,1); m = +d.slice(1); }
+  else { h = +d.slice(0,2); m = +d.slice(2,4); }
+  if (h > 23 || m > 59) return '';
+  if (h >= 1 && h <= 12) h = (h % 12) + (pm ? 12 : 0);   // 13~23 또는 0 은 입력한 그대로
+  return pad(h) + ':' + pad(m);
+}
+/* 입력 칸 옆의 오전/오후 상태로 24시간 값 읽기 */
+function tfValue(input){
+  if (!input) return '';
+  const w = input.closest('.tf'), pm = !!(w && w.querySelector('[data-v=pm].on'));
+  return parse12(input.value, pm);
+}
+document.addEventListener('input', e => {
+  const el = e.target; if (!el.classList || !el.classList.contains('tin')) return;
+  const d = el.value.replace(/\D/g, '').slice(0, 4);
+  el.value = d.length === 3 ? d[0] + ':' + d.slice(1) : d.length === 4 ? d.slice(0,2) + ':' + d.slice(2) : d;
+});
+document.addEventListener('focusin', e => { const el = e.target; if (el.classList && el.classList.contains('tin') && el.value){ const v0 = el.value; setTimeout(() => { if (el.value === v0) el.select(); }, 0); } });
+/* 수정하다 그냥 나가면 다시 잠금 */
+document.addEventListener('focusout', e => {
+  const el = e.target;
+  if (el.classList && el.classList.contains('tin') && el.dataset.c) setTimeout(() => { el.readOnly = true; el.classList.remove('editing'); }, 150);
 });
 document.addEventListener('change', e => {
   const el = e.target, c = el.dataset.c; if (!c) return;
   const id = el.dataset.id;
   if (c === 'time'){
-    if (!el.value) return; const g = S.groups[id], x = g.times[+el.dataset.i]; x.t = el.value;
-    if (isOnce(id)){ x.on = true; g.on = true; arm(x); toast(`${dayWord(ymd(new Date(x.at)))} ${x.t}에 울립니다`); }
+    const g = S.groups[id], x = g.times[+el.dataset.i], v = tfValue(el);
+    if (!v){ el.value = to12(x.t).h + ':' + pad(to12(x.t).m); toast('시각을 숫자로 입력해 주세요 (예: 530)'); return; }
+    if (v === x.t){ el.value = v; return; }
+    x.t = v;
+    if (isOnce(id)){ x.on = true; g.on = true; arm(x); toast(`${dayWord(ymd(new Date(x.at)))} ${fmt12(x.t)}에 울립니다`); }
     g.times.sort((a,b)=>a.t.localeCompare(b.t));
   }
   else if (c === 'tOn'){
     const x = S.groups[id].times[+el.dataset.i]; x.on = el.checked;
-    if (isOnce(id)){ arm(x); if (x.on) toast(`${dayWord(ymd(new Date(x.at)))} ${x.t}에 울립니다`); }
+    if (isOnce(id)){ arm(x); if (x.on) toast(`${dayWord(ymd(new Date(x.at)))} ${fmt12(x.t)}에 울립니다`); }
   }
   else if (c === 'gOn'){ S.groups[id].on = el.checked; if (isOnce(id) && el.checked) S.groups[id].times.forEach(arm); }
   else if (c === 'tName'){ const v = el.value.trim(); if (v){ S.types[id].name = v; if (!S.pattern.includes(id)) S.types[id].short = v[0]; } }
   else if (c === 'tColor') S.types[id].color = el.value;
   else if (c === 'master') S.enabled = el.checked;
+  else if (c === 'oTime'){
+    const x = S.onceAlarms[+el.dataset.i], v = tfValue(el);
+    if (!v){ el.value = to12(x.t).h + ':' + pad(to12(x.t).m); toast('시각을 숫자로 입력해 주세요 (예: 700)'); return; }
+    x.t = v; x.on = true; arm(x); S.onceAlarms.sort((a,b) => a.t.localeCompare(b.t));
+    toast(`${dayWord(ymd(new Date(x.at)))} ${fmt12(x.t)}에 울립니다`);
+  }
+  else if (c === 'oOn'){ const x = S.onceAlarms[+el.dataset.i]; x.on = el.checked; arm(x);
+    if (x.on && !isWeekly(x) && x.at < Date.now()){ delete x.date; arm(x); }   // 지난 날짜면 가장 가까운 시각으로
+    if (x.on) toast(`${onceWhen(x).replace(' 울림','')} ${fmt12(x.t)}에 울립니다`); }
+  else if (c === 'oLabel'){ S.onceAlarms[+el.dataset.i].label = el.value.trim(); }
+  else if (c === 'rPrev') S.groups[id].rules[+el.dataset.r].prev = el.value;
+  else if (c === 'rTarget') S.groups[id].rules[+el.dataset.r].target = el.value;
+  else if (c === 'rShift') S.groups[id].rules[+el.dataset.r].shift = el.value;
+  else if (c === 'stats') S.statsOn = el.checked;
   else if (c === 'sound'){ S.sound = el.value; previewSound(el.value); }
   else if (c === 'gSound'){ S.groups[id].sound = el.value || null; previewSound(soundOf([id])); }
   save(); render();
@@ -984,7 +1595,99 @@ window.handleBack = function(){
   if (!S.setupDone && W.step > 1){ W.step--; render(); return true; }
   return false;
 };
-scheduleNative(); render(); tick();
+/* ---------- 앱 안에서 업데이트 ---------- */
+let updState = null; // null | {state:'download', pct} | {state:'confirm'} | {state:'error', msg}
+function curVersion(){ try{ return (NATIVE && NATIVE.appVersion && NATIVE.appVersion()) || ''; }catch(e){ return ''; } }
+function verCmp(a, b){
+  const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number);
+  for (let i=0; i<Math.max(x.length, y.length); i++){ const d = (x[i]||0) - (y[i]||0); if (d) return d; }
+  return 0;
+}
+function hasUpdate(){ return !!(S.update && curVersion() && verCmp(S.update.ver, curVersion()) > 0); }
+/* GitHub 최신 릴리스 확인. 결과: 'new' | 'none' | 'fail' | 'skip' */
+async function checkUpdate(force){
+  if (!NATIVE || !NATIVE.update || !UPDATE_REPO) return 'skip';
+  if (!force && S.updCheckedAt && Date.now() - S.updCheckedAt < 6 * 3600e3) return hasUpdate() ? 'new' : 'skip';
+  try{
+    const r = await fetch('https://api.github.com/repos/' + UPDATE_REPO + '/releases/latest', {headers:{Accept:'application/vnd.github+json'}});
+    if (!r.ok) return 'fail';
+    const j = await r.json();
+    const apk = (j.assets || []).find(a => /\.apk$/i.test(a.name));
+    const m = apk && apk.name.match(/(\d+\.\d+\.\d+)/);
+    S.updCheckedAt = Date.now();
+    S.update = m ? {ver: m[1], url: apk.browser_download_url, title: j.name || j.tag_name || '', size: apk.size || 0} : null;
+    save();
+    return hasUpdate() ? 'new' : 'none';
+  }catch(e){ return 'fail'; }
+}
+function updateBanner(){
+  if (!hasUpdate()) return '';
+  const u = S.update, st = updState;
+  let right = '<button class="small-btn" data-a="doUpdate">업데이트</button>', sub = '버튼을 누른 뒤 설치 화면에서 <b>업데이트</b>만 누르면 돼요. 설정과 알람은 그대로 남아요.';
+  if (st && st.state === 'download'){ right = `<span class="badge">${st.pct}%</span>`; sub = `내려받는 중이에요 <span class="upd-bar"><i style="width:${st.pct}%"></i></span>`; }
+  else if (st && st.state === 'confirm'){ right = ''; sub = '설치 화면에서 <b>업데이트</b>를 눌러 주세요. 설치가 끝나면 앱을 다시 열면 돼요.'; }
+  else if (st && st.state === 'needPermission'){ sub = '설정 화면에서 <b>이 출처 허용</b>을 켜고 돌아와서 다시 <b>업데이트</b>를 눌러 주세요.'; }
+  else if (st && st.state === 'error'){ right = '<button class="small-btn" data-a="doUpdate">다시 시도</button>'; sub = esc(st.msg); }
+  return `<div class="upd-banner"><div style="flex:1"><b>새 버전 ${esc(u.ver)}이(가) 나왔어요</b><div class="small" style="margin-top:2px">${sub}</div></div>${right}</div>`;
+}
+function startUpdate(){
+  if (!hasUpdate()) return;
+  updState = {state:'download', pct:0};
+  if (tab !== 'cal'){ tab = 'cal'; }
+  render();
+  try{ NATIVE.update(S.update.url); }catch(e){ updState = {state:'error', msg:'업데이트를 시작하지 못했어요'}; render(); }
+}
+/* 안드로이드 쪽에서 진행 상황을 알려 줌 */
+window.onUpdateState = function(state, value){
+  if (state === 'download') updState = {state, pct: +value || 0};
+  else if (state === 'error') updState = {state, msg: value};
+  else updState = {state};
+  if (state === 'needPermission') toast("'이 출처 허용'을 켜 주세요");
+  if (S.setupDone && tab === 'cal' && $('#modal').classList.contains('hidden')){
+    const old = document.querySelector('.upd-banner'), html = updateBanner();
+    if (old && html){ old.outerHTML = html; } else render();
+  }
+};
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(false).then(r => { if (r === 'new' && S.setupDone && tab === 'cal' && !document.querySelector('.upd-banner')) render(); }); });
+
+/* ---------- 익명 사용 통계 (하루 한 번) ---------- */
+function deviceId(){
+  if (!S.clientId){
+    const a = new Uint8Array(16); crypto.getRandomValues(a);
+    S.clientId = Array.from(a, b => b.toString(16).padStart(2,'0')).join('');
+    save();
+  }
+  return S.clientId;
+}
+function sendStats(){
+  if (!STATS_URL || S.statsOn === false || !S.setupDone) return;
+  const today = todayStr();
+  if (S.statsDay === today) return;
+  const custom = Object.keys(S.types).filter(id => !S.pattern.includes(id));
+  const ua = navigator.userAgent.match(/Android\s([\d.]+)/);
+  let app = 'web'; try{ if (NATIVE && NATIVE.appVersion) app = NATIVE.appVersion(); }catch(e){}
+  const body = {
+    id: deviceId(), day: today, app, platform: NATIVE ? 'android' : 'web',
+    os: ua ? 'Android ' + ua[1].split('.')[0] : '',
+    pattern: S.pattern.map(id => S.types[id] ? S.types[id].short : '?').join(''),
+    patternLen: S.pattern.length,
+    groups: Object.keys(S.groups).filter(id => S.types[id] && S.groups[id].on && S.groups[id].times.some(t => t.on)).length,
+    customGroups: custom.filter(id => !isOnce(id) && !isRepeat(id)).length,
+    repeatGroups: custom.filter(id => isRepeat(id)).length,
+    onceGroups: (S.onceAlarms || []).length,
+    overrides: Object.keys(S.overrides).length,
+    memos: Object.keys(S.memos || {}).length,
+    sound: S.sound, enabled: S.enabled ? 1 : 0,
+  };
+  // 응답은 읽지 않으므로 no-cors (앱 안의 file:// 화면에서도 보낼 수 있음)
+  fetch(STATS_URL, {method:'POST', mode:'no-cors', keepalive:true, body: JSON.stringify(body)})
+    .then(() => { S.statsDay = today; try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} })
+    .catch(() => {});
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(sendStats, 1500); });
+
+scheduleNative(); render(); tick(); setTimeout(sendStats, 1500);
+checkUpdate(false).then(r => { if (r === 'new' && S.setupDone && tab === 'cal') render(); });
 </script>
 </body>
 </html>
